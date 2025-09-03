@@ -1,21 +1,21 @@
 .PHONY: all build run gotool clean help
 
-BINARY="event-server"
+BINARY="form-server"
 OLD_MODULE="grpc_gateway_framework"
-PROTO_MODULE = github.com/arwoosa/event
+PROTO_MODULE = github.com/arwoosa/form-service
 
 all: gotool build
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ./bin/${BINARY} ./cmd/event-server
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o ./bin/${BINARY} ./cmd/form-server
 
-# Start console (management) API server
-run-console:
-	@go run ./cmd/event-server console --config conf/config.yaml
+# Start form service server
+run:
+	@go run ./cmd/form-server server --config conf/config.yaml
 
-# Start public API server
-run-public:
-	@go run ./cmd/event-server public --config conf/config.yaml
+# Start form service with Docker config
+run-docker:
+	@go run ./cmd/form-server server --config conf/config_docker.yaml
 
 gotool:
 	@echo "Running Go formatting tools..."

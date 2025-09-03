@@ -20,6 +20,7 @@ type AppConfig struct {
 	*KetoConfig       `mapstructure:"keto"`
 	*ExternalConfig   `mapstructure:"external"`
 	*PaginationConfig `mapstructure:"pagination"`
+	*BusinessRulesConfig `mapstructure:"business_rules"`
 }
 
 // MongodbConfig holds the MongoDB configuration.
@@ -63,6 +64,11 @@ type PaginationConfig struct {
 	DefaultPageSize       int `mapstructure:"default_page_size"`
 	MaxPageSize           int `mapstructure:"max_page_size"`
 	DefaultLocationRadius int `mapstructure:"default_location_radius"`
+}
+
+// BusinessRulesConfig holds business rule configuration.
+type BusinessRulesConfig struct {
+	MaxTemplatesPerMerchant int `mapstructure:"max_templates_per_merchant"`
 }
 
 // NewConfig loads the application configuration from a file.

@@ -8,7 +8,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
-import "common.proto";
+import "proto/common.proto";
 
 // Form Service - Manages form templates and forms
 service FormService {
