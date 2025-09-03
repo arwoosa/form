@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
@@ -45,7 +44,7 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 
 	// Validate merchant access
 	if err := ValidateUserAccess(userInfo, input.MerchantID); err != nil {
-		log.Error("User does not have access to merchant", 
+		log.Error("User does not have access to merchant",
 			log.String("user_merchant_id", userInfo.MerchantID),
 			log.String("requested_merchant_id", input.MerchantID))
 		return nil, ErrUnauthorized
@@ -74,7 +73,7 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 		return nil, ErrInternalError
 	}
 
-	log.Info("Template created successfully", 
+	log.Info("Template created successfully",
 		log.String("template_id", template.ID.Hex()),
 		log.String("name", template.Name),
 		log.String("merchant_id", template.MerchantID))
@@ -124,10 +123,10 @@ func (s *FormTemplateService) ListTemplates(ctx context.Context, options *models
 		options.Page = 1
 	}
 	if options.PageSize <= 0 {
-		options.PageSize = s.config.Pagination.DefaultPageSize
+		options.PageSize = s.config.PaginationConfig.DefaultPageSize
 	}
-	if options.PageSize > s.config.Pagination.MaxPageSize {
-		options.PageSize = s.config.Pagination.MaxPageSize
+	if options.PageSize > s.config.PaginationConfig.MaxPageSize {
+		options.PageSize = s.config.PaginationConfig.MaxPageSize
 	}
 
 	templates, count, err := s.templateRepo.FindByMerchantID(ctx, options)
@@ -174,7 +173,7 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 		return nil, ErrInternalError
 	}
 
-	log.Info("Template updated successfully", 
+	log.Info("Template updated successfully",
 		log.String("template_id", existing.ID.Hex()),
 		log.String("name", existing.Name))
 
@@ -211,7 +210,7 @@ func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID pri
 		return ErrInternalError
 	}
 
-	log.Info("Template deleted successfully", 
+	log.Info("Template deleted successfully",
 		log.String("template_id", templateID.Hex()),
 		log.String("merchant_id", merchantID))
 
@@ -250,7 +249,7 @@ func (s *FormTemplateService) DuplicateTemplate(ctx context.Context, input *mode
 		return nil, ErrInternalError
 	}
 
-	log.Info("Template duplicated successfully", 
+	log.Info("Template duplicated successfully",
 		log.String("source_id", input.SourceID.Hex()),
 		log.String("new_id", duplicate.ID.Hex()),
 		log.String("new_name", duplicate.Name))
@@ -266,11 +265,11 @@ func (s *FormTemplateService) checkTemplateLimit(ctx context.Context, merchantID
 		return ErrInternalError
 	}
 
-	if count >= int64(s.config.BusinessRules.MaxTemplatesPerMerchant) {
-		log.Warn("Template limit exceeded", 
+	if count >= int64(s.config.BusinessRulesConfig.MaxTemplatesPerMerchant) {
+		log.Warn("Template limit exceeded",
 			log.String("merchant_id", merchantID),
 			log.Int64("current_count", count),
-			log.Int("limit", s.config.BusinessRules.MaxTemplatesPerMerchant))
+			log.Int("limit", s.config.BusinessRulesConfig.MaxTemplatesPerMerchant))
 		return ErrTemplateLimitExceeded
 	}
 

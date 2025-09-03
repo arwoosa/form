@@ -10,16 +10,16 @@ import (
 
 // AppConfig holds the application configuration.
 type AppConfig struct {
-	Mode              string `mapstructure:"mode"`
-	Port              int    `mapstructure:"port"`
-	Name              string `mapstructure:"name"`
-	Version           string `mapstructure:"version"`
-	TimeZone          string `mapstructure:"time_zone"`
-	*LogConfig        `mapstructure:"log"`
-	*MongodbConfig    `mapstructure:"mongodb"`
-	*KetoConfig       `mapstructure:"keto"`
-	*ExternalConfig   `mapstructure:"external"`
-	*PaginationConfig `mapstructure:"pagination"`
+	Mode                 string `mapstructure:"mode"`
+	Port                 int    `mapstructure:"port"`
+	Name                 string `mapstructure:"name"`
+	Version              string `mapstructure:"version"`
+	TimeZone             string `mapstructure:"time_zone"`
+	*LogConfig           `mapstructure:"log"`
+	*MongodbConfig       `mapstructure:"mongodb"`
+	*KetoConfig          `mapstructure:"keto"`
+	*ExternalConfig      `mapstructure:"external"`
+	*PaginationConfig    `mapstructure:"pagination"`
 	*BusinessRulesConfig `mapstructure:"business_rules"`
 }
 

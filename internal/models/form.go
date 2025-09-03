@@ -10,12 +10,12 @@ import (
 type Form struct {
 	ID          primitive.ObjectID  `bson:"_id,omitempty"`
 	Name        string              `bson:"name"`
-	EventID     *primitive.ObjectID `bson:"event_id,omitempty"`   // Optional reference to an event
+	EventID     *primitive.ObjectID `bson:"event_id,omitempty"` // Optional reference to an event
 	MerchantID  string              `bson:"merchant_id"`
 	TemplateID  *primitive.ObjectID `bson:"template_id,omitempty"` // Optional reference to a form template
 	Description string              `bson:"description"`
-	Schema      interface{}         `bson:"schema"`      // JSON Schema for data structure and validation
-	UISchema    interface{}         `bson:"ui_schema"`   // UI Schema for form layout and appearance
+	Schema      interface{}         `bson:"schema"`    // JSON Schema for data structure and validation
+	UISchema    interface{}         `bson:"ui_schema"` // UI Schema for form layout and appearance
 	CreatedAt   primitive.DateTime  `bson:"created_at"`
 	CreatedBy   string              `bson:"created_by"`
 	UpdatedAt   primitive.DateTime  `bson:"updated_at"`
@@ -49,9 +49,9 @@ func (f *Form) SetUpdatedAt(t time.Time) {
 
 // IsValid checks if the Form has required fields
 func (f Form) IsValid() bool {
-	return f.Name != "" && 
-		   f.MerchantID != "" &&
-		   f.CreatedBy != ""
+	return f.Name != "" &&
+		f.MerchantID != "" &&
+		f.CreatedBy != ""
 }
 
 // HasTemplate checks if the form is based on a template

@@ -12,8 +12,8 @@ type FormTemplate struct {
 	Name        string             `bson:"name"`
 	MerchantID  string             `bson:"merchant_id"`
 	Description string             `bson:"description"`
-	Schema      interface{}        `bson:"schema"`      // JSON Schema for data structure and validation
-	UISchema    interface{}        `bson:"ui_schema"`   // UI Schema for form layout and appearance
+	Schema      interface{}        `bson:"schema"`    // JSON Schema for data structure and validation
+	UISchema    interface{}        `bson:"ui_schema"` // UI Schema for form layout and appearance
 	CreatedAt   primitive.DateTime `bson:"created_at"`
 	CreatedBy   string             `bson:"created_by"`
 	UpdatedAt   primitive.DateTime `bson:"updated_at"`
@@ -47,9 +47,9 @@ func (ft *FormTemplate) SetUpdatedAt(t time.Time) {
 
 // IsValid checks if the FormTemplate has required fields
 func (ft FormTemplate) IsValid() bool {
-	return ft.Name != "" && 
-		   ft.MerchantID != "" &&
-		   ft.CreatedBy != ""
+	return ft.Name != "" &&
+		ft.MerchantID != "" &&
+		ft.CreatedBy != ""
 }
 
 // CreateFormTemplateInput represents the input for creating a new form template

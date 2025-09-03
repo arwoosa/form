@@ -46,7 +46,7 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 
 	// Validate merchant access
 	if err := ValidateUserAccess(userInfo, input.MerchantID); err != nil {
-		log.Error("User does not have access to merchant", 
+		log.Error("User does not have access to merchant",
 			log.String("user_merchant_id", userInfo.MerchantID),
 			log.String("requested_merchant_id", input.MerchantID))
 		return nil, ErrUnauthorized
@@ -85,7 +85,7 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 		return nil, ErrInternalError
 	}
 
-	log.Info("Form created successfully", 
+	log.Info("Form created successfully",
 		log.String("form_id", form.ID.Hex()),
 		log.String("name", form.Name),
 		log.String("merchant_id", form.MerchantID))
@@ -135,10 +135,10 @@ func (s *FormService) ListForms(ctx context.Context, options *models.FormQueryOp
 		options.Page = 1
 	}
 	if options.PageSize <= 0 {
-		options.PageSize = s.config.Pagination.DefaultPageSize
+		options.PageSize = s.config.PaginationConfig.DefaultPageSize
 	}
-	if options.PageSize > s.config.Pagination.MaxPageSize {
-		options.PageSize = s.config.Pagination.MaxPageSize
+	if options.PageSize > s.config.PaginationConfig.MaxPageSize {
+		options.PageSize = s.config.PaginationConfig.MaxPageSize
 	}
 
 	forms, count, err := s.formRepo.Find(ctx, options)
@@ -200,7 +200,7 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 		return nil, ErrInternalError
 	}
 
-	log.Info("Form updated successfully", 
+	log.Info("Form updated successfully",
 		log.String("form_id", existing.ID.Hex()),
 		log.String("name", existing.Name))
 
@@ -237,7 +237,7 @@ func (s *FormService) DeleteForm(ctx context.Context, formID primitive.ObjectID,
 		return ErrInternalError
 	}
 
-	log.Info("Form deleted successfully", 
+	log.Info("Form deleted successfully",
 		log.String("form_id", formID.Hex()),
 		log.String("merchant_id", merchantID))
 
@@ -263,10 +263,10 @@ func (s *FormService) ListFormsByEvent(ctx context.Context, eventID primitive.Ob
 		page = 1
 	}
 	if pageSize <= 0 {
-		pageSize = s.config.Pagination.DefaultPageSize
+		pageSize = s.config.PaginationConfig.DefaultPageSize
 	}
-	if pageSize > s.config.Pagination.MaxPageSize {
-		pageSize = s.config.Pagination.MaxPageSize
+	if pageSize > s.config.PaginationConfig.MaxPageSize {
+		pageSize = s.config.PaginationConfig.MaxPageSize
 	}
 
 	forms, count, err := s.formRepo.FindByEventID(ctx, eventID, merchantID, page, pageSize)
@@ -297,10 +297,10 @@ func (s *FormService) ListFormsByTemplate(ctx context.Context, templateID primit
 		page = 1
 	}
 	if pageSize <= 0 {
-		pageSize = s.config.Pagination.DefaultPageSize
+		pageSize = s.config.PaginationConfig.DefaultPageSize
 	}
-	if pageSize > s.config.Pagination.MaxPageSize {
-		pageSize = s.config.Pagination.MaxPageSize
+	if pageSize > s.config.PaginationConfig.MaxPageSize {
+		pageSize = s.config.PaginationConfig.MaxPageSize
 	}
 
 	forms, count, err := s.formRepo.FindByTemplateID(ctx, templateID, merchantID, page, pageSize)

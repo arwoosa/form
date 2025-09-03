@@ -4,8 +4,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/arwoosa/form-service/conf"
-	consolepb "github.com/arwoosa/form-service/gen/pb/console"
-	publicpb "github.com/arwoosa/form-service/gen/pb/public"
+	pb "github.com/arwoosa/form-service/gen/pb/form"
 	"github.com/arwoosa/form-service/internal/dao/mongodb"
 	"github.com/arwoosa/form-service/internal/dao/repository"
 
@@ -15,101 +14,49 @@ import (
 
 // This file registers the services with the Vulpes framework
 
-// RegisterConsoleServices registers only the console (management) services
-func RegisterConsoleServices(appConfig *conf.AppConfig) {
-	// Register console gRPC services
+// RegisterFormServices registers form services
+func RegisterFormServices(appConfig *conf.AppConfig) {
+	// Register form gRPC services
 	ezgrpc.InjectGrpcService(func(s grpc.ServiceRegistrar) {
-		registerConsoleServices(s, appConfig)
+		registerFormServices(s, appConfig)
 	})
 
-	// Register console gRPC-Gateway handlers
-	ezgrpc.RegisterHandlerFromEndpoint(consolepb.RegisterEventServiceHandlerFromEndpoint)
+	// Register form gRPC-Gateway handlers
+	ezgrpc.RegisterHandlerFromEndpoint(pb.RegisterFormServiceHandlerFromEndpoint)
 }
 
-// RegisterPublicServices registers only the public services
-func RegisterPublicServices(appConfig *conf.AppConfig) {
-	// Register public gRPC services
-	ezgrpc.InjectGrpcService(func(s grpc.ServiceRegistrar) {
-		registerPublicServices(s, appConfig)
-	})
-
-	// Register public gRPC-Gateway handlers
-	ezgrpc.RegisterHandlerFromEndpoint(publicpb.RegisterPublicEventServiceHandlerFromEndpoint)
-}
-
-// registerConsoleServices sets up and registers only console (EventService) related gRPC services
-func registerConsoleServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
+// registerFormServices sets up and registers form related gRPC services
+func registerFormServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
 	if appConfig == nil {
-		log.Warn("Console services initialized with nil config - using mock services")
-		mockOrderService := NewMockOrderServiceClient(false, nil)
-		eventSvc := &EventService{eventRepo: nil, sessionService: nil, orderService: mockOrderService}
-		consolepb.RegisterEventServiceServer(s, NewEventServiceServer(eventSvc, nil))
-		consolepb.RegisterInternalServiceServer(s, NewInternalServiceServer(nil, nil))
+		log.Warn("Form services initialized with nil config - using mock services")
+		grpcServer := NewGRPCFormServer(nil, nil)
+		pb.RegisterFormServiceServer(s, grpcServer)
 		return
 	}
 
 	// Get MongoDB singleton (should be initialized by main)
 	mongoClient := mongodb.GetMongoDB()
 	if mongoClient == nil {
-		log.Warn("Console services initialized without MongoDB - using mock services")
-		mockOrderService := NewMockOrderServiceClient(false, nil)
-		eventSvc := &EventService{eventRepo: nil, sessionService: nil, orderService: mockOrderService}
-		consolepb.RegisterEventServiceServer(s, NewEventServiceServer(eventSvc, appConfig.PaginationConfig))
-		consolepb.RegisterInternalServiceServer(s, NewInternalServiceServer(nil, nil))
+		log.Warn("Form services initialized without MongoDB - using mock services")
+		grpcServer := NewGRPCFormServer(nil, nil)
+		pb.RegisterFormServiceServer(s, grpcServer)
 		return
 	}
+
+	log.Info("Form services initialized with MongoDB connection")
 
 	// Initialize repositories
-	log.Info("Console services initialized with MongoDB connection")
-	eventRepo := repository.NewMongoEventRepository(mongoClient, appConfig.DB, appConfig.PaginationConfig)
-	sessionRepo := repository.NewMongoSessionRepository(mongoClient, appConfig.DB)
+	mongoRepo := repository.NewMongoRepository(mongoClient, appConfig.DB)
+	templateRepo := repository.NewFormTemplateRepository(mongoRepo)
+	formRepo := repository.NewFormRepository(mongoRepo)
 
-	// Initialize external services
-	var orderService OrderServiceClient
-	if appConfig.ExternalConfig != nil {
-		log.Info("Console services using real order service")
-		orderService = NewOrderServiceClient(appConfig.OrderService)
-	} else {
-		log.Warn("Console services initialized without external config - using mock order service")
-		orderService = NewMockOrderServiceClient(false, nil)
-	}
+	// Initialize services
+	templateService := NewFormTemplateService(templateRepo, appConfig)
+	formService := NewFormService(formRepo, templateRepo, appConfig)
 
-	// Initialize business services
-	sessionSvc := NewSessionService(sessionRepo, eventRepo)
-	eventSvc := NewEventService(eventRepo, sessionSvc, orderService)
+	// Create gRPC server with the services
+	grpcServer := NewGRPCFormServer(templateService, formService)
 
-	// Register console services
-	consolepb.RegisterEventServiceServer(s, NewEventServiceServer(eventSvc, appConfig.PaginationConfig))
-	consolepb.RegisterInternalServiceServer(s, NewInternalServiceServer(eventRepo, sessionRepo))
-}
-
-// registerPublicServices sets up and registers only public (PublicEventService) related gRPC services
-func registerPublicServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
-	if appConfig == nil {
-		log.Warn("Public services initialized with nil config - using mock services")
-		publicSvc := &PublicService{eventRepo: nil, sessionService: nil, paginationConfig: nil}
-		publicpb.RegisterPublicEventServiceServer(s, NewPublicEventServiceServer(publicSvc))
-		return
-	}
-
-	// Get MongoDB singleton (should be initialized by main)
-	mongoClient := mongodb.GetMongoDB()
-	if mongoClient == nil {
-		log.Warn("Public services initialized without MongoDB - using mock services")
-		publicSvc := &PublicService{eventRepo: nil, sessionService: nil, paginationConfig: appConfig.PaginationConfig}
-		publicpb.RegisterPublicEventServiceServer(s, NewPublicEventServiceServer(publicSvc))
-		return
-	}
-
-	// Initialize repositories
-	log.Info("Public services initialized with MongoDB connection")
-	eventRepo := repository.NewMongoEventRepository(mongoClient, appConfig.DB, appConfig.PaginationConfig)
-	sessionRepo := repository.NewMongoSessionRepository(mongoClient, appConfig.DB)
-
-	// Initialize business services
-	sessionSvc := NewSessionService(sessionRepo, eventRepo)
-	publicSvc := NewPublicService(eventRepo, sessionSvc, appConfig.PaginationConfig)
-
-	// Register only PublicEventService (public API)
-	publicpb.RegisterPublicEventServiceServer(s, NewPublicEventServiceServer(publicSvc))
+	// Register form service
+	pb.RegisterFormServiceServer(s, grpcServer)
 }

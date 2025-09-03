@@ -12,24 +12,20 @@ WORKDIR /build
 COPY . .
 RUN go mod download
 
-RUN go build -o partivo_event ./cmd/event-server/
+RUN go build -o partivo_form_service ./cmd/form-server/
 
 ###################
 # multi-stage build
 ###################
 FROM scratch
 
-#COPY ./templates /templates
 WORKDIR /app
 COPY ./conf /app/conf
 
-COPY --from=builder /build/partivo_event /app/
+COPY --from=builder /build/partivo_form_service /app/
 
-#RUN set -eux \
-#
-#    && apt-get update \
-#    && apt-get install -y --no-install-recommends netcat \
-EXPOSE 8081
+# Expose both HTTP and gRPC ports
+EXPOSE 8081 8082
 
-ENTRYPOINT ["/app/partivo_event"]
-CMD ["console", "--config", "conf/config_docker.yaml"]
+ENTRYPOINT ["/app/partivo_form_service"]
+CMD ["server", "--config", "conf/config_docker.yaml"]

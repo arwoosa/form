@@ -10,20 +10,20 @@ import (
 
 var (
 	// Common errors
-	ErrUnauthorized        = errors.New("unauthorized access")
-	ErrNotFound           = errors.New("resource not found")
-	ErrInvalidInput       = errors.New("invalid input")
-	ErrInternalError      = errors.New("internal server error")
-	
+	ErrUnauthorized  = errors.New("unauthorized access")
+	ErrNotFound      = errors.New("resource not found")
+	ErrInvalidInput  = errors.New("invalid input")
+	ErrInternalError = errors.New("internal server error")
+
 	// Template-specific errors
-	ErrTemplateNotFound   = errors.New("form template not found")
+	ErrTemplateNotFound      = errors.New("form template not found")
 	ErrTemplateLimitExceeded = errors.New("template limit exceeded for merchant")
-	ErrTemplateNameExists = errors.New("template name already exists")
-	
+	ErrTemplateNameExists    = errors.New("template name already exists")
+
 	// Form-specific errors
-	ErrFormNotFound       = errors.New("form not found")
+	ErrFormNotFound        = errors.New("form not found")
 	ErrFormInvalidTemplate = errors.New("invalid form template reference")
-	ErrFormInvalidEvent   = errors.New("invalid event reference")
+	ErrFormInvalidEvent    = errors.New("invalid event reference")
 )
 
 // ToGRPCError converts service errors to gRPC status errors

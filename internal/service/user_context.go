@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/arwoosa/form-service/pkg/vulpes/relation"
+	"github.com/arwoosa/vulpes/ezgrpc"
 )
 
 // UserInfo represents authenticated user information
@@ -18,18 +18,18 @@ type UserInfo struct {
 // GetUserInfo extracts user information from context using Vulpes
 func GetUserInfo(ctx context.Context) (*UserInfo, error) {
 	// Use Vulpes GetUser method to extract user info from context
-	user, err := relation.GetUser(ctx)
+	user, err := ezgrpc.GetUser(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert Vulpes User to our UserInfo struct
 	userInfo := &UserInfo{
-		UserID:     user.UserID,
+		UserID:     user.ID,
 		UserEmail:  user.Email,
 		UserName:   user.Name,
-		UserAvatar: user.Avatar,
-		MerchantID: user.MerchantID,
+		UserAvatar: "", // Avatar field not available in ezgrpc.User
+		MerchantID: user.Merchant,
 	}
 
 	return userInfo, nil
