@@ -35,12 +35,19 @@ go.sum.bak
 # Backup directories
 *_backup/
 
-# Binarys
+# Binaries
 server
+form-server
 __debug_bin*
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
 # Local files
 *.local.*
 
 .vscode
-.claude
+.claudeform-server
