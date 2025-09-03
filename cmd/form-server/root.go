@@ -19,12 +19,11 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "event-server",
-	Short: "Event microservice with console and public APIs",
-	Long: `Event microservice provides both console (management) and public APIs.
+	Use:   "form-server",
+	Short: "Form service microservice with gRPC and HTTP APIs",
+	Long: `Form service microservice provides form template and form management capabilities.
 	
-Use 'console' command to start the internal management service.
-Use 'public' command to start the public-facing API service.`,
+Use 'server' command to start the form service with both gRPC and HTTP APIs.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
