@@ -48,6 +48,20 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "sort_by",
+            "description": "Optional sort field",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_order",
+            "description": "Optional sort order",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -259,6 +273,20 @@
           {
             "name": "event_id",
             "description": "Optional filter by event",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_by",
+            "description": "Optional sort field",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_order",
+            "description": "Optional sort order",
             "in": "query",
             "required": false,
             "type": "string"

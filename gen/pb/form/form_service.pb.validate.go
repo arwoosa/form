@@ -630,10 +630,32 @@ func (m *ListFormTemplatesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetPageSize(); val < 1 || val > 100 {
+	if val := m.GetPageSize(); val < 1 || val > 2000 {
 		err := ListFormTemplatesRequestValidationError{
 			field:  "PageSize",
-			reason: "value must be inside range [1, 100]",
+			reason: "value must be inside range [1, 2000]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _ListFormTemplatesRequest_SortBy_InLookup[m.GetSortBy()]; !ok {
+		err := ListFormTemplatesRequestValidationError{
+			field:  "SortBy",
+			reason: "value must be in list [ name created_at updated_at]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _ListFormTemplatesRequest_SortOrder_InLookup[m.GetSortOrder()]; !ok {
+		err := ListFormTemplatesRequestValidationError{
+			field:  "SortOrder",
+			reason: "value must be in list [ asc desc]",
 		}
 		if !all {
 			return err
@@ -720,6 +742,19 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListFormTemplatesRequestValidationError{}
+
+var _ListFormTemplatesRequest_SortBy_InLookup = map[string]struct{}{
+	"":           {},
+	"name":       {},
+	"created_at": {},
+	"updated_at": {},
+}
+
+var _ListFormTemplatesRequest_SortOrder_InLookup = map[string]struct{}{
+	"":     {},
+	"asc":  {},
+	"desc": {},
+}
 
 // Validate checks the field values on ListFormTemplatesResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1954,10 +1989,10 @@ func (m *ListFormsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetPageSize(); val < 1 || val > 100 {
+	if val := m.GetPageSize(); val < 1 || val > 2000 {
 		err := ListFormsRequestValidationError{
 			field:  "PageSize",
-			reason: "value must be inside range [1, 100]",
+			reason: "value must be inside range [1, 2000]",
 		}
 		if !all {
 			return err
@@ -1966,6 +2001,28 @@ func (m *ListFormsRequest) validate(all bool) error {
 	}
 
 	// no validation rules for EventId
+
+	if _, ok := _ListFormsRequest_SortBy_InLookup[m.GetSortBy()]; !ok {
+		err := ListFormsRequestValidationError{
+			field:  "SortBy",
+			reason: "value must be in list [ name created_at updated_at]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _ListFormsRequest_SortOrder_InLookup[m.GetSortOrder()]; !ok {
+		err := ListFormsRequestValidationError{
+			field:  "SortOrder",
+			reason: "value must be in list [ asc desc]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ListFormsRequestMultiError(errors)
@@ -2044,6 +2101,19 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListFormsRequestValidationError{}
+
+var _ListFormsRequest_SortBy_InLookup = map[string]struct{}{
+	"":           {},
+	"name":       {},
+	"created_at": {},
+	"updated_at": {},
+}
+
+var _ListFormsRequest_SortOrder_InLookup = map[string]struct{}{
+	"":     {},
+	"asc":  {},
+	"desc": {},
+}
 
 // Validate checks the field values on ListFormsResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the

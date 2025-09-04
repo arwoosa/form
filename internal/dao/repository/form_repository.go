@@ -91,8 +91,10 @@ func (r *mongoFormRepository) Find(ctx context.Context, options *models.FormQuer
 
 	var forms []*models.Form
 	pagination := &PaginationOptions{
-		Page:     options.Page,
-		PageSize: options.PageSize,
+		Page:      options.Page,
+		PageSize:  options.PageSize,
+		SortBy:    options.SortBy,
+		SortOrder: options.SortOrder,
 	}
 
 	count, err := r.mongoRepo.FindWithPagination(ctx, models.Form{}.TableName(), filter, &forms, pagination)

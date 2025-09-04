@@ -21,8 +21,8 @@ keto:
 #     timeout: "10s"
 
 pagination:
-  default_page_size: 20
-  max_page_size: 100
+  default_page_size: 1000
+  max_page_size: 2000
 
 business_rules:
   max_templates_per_merchant: 3

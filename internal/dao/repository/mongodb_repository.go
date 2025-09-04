@@ -16,8 +16,10 @@ type MongoRepository struct {
 
 // PaginationOptions represents pagination parameters
 type PaginationOptions struct {
-	Page     int
-	PageSize int
+	Page      int
+	PageSize  int
+	SortBy    string
+	SortOrder string
 }
 
 // NewMongoRepository creates a new MongoDB repository
@@ -62,11 +64,22 @@ func (r *MongoRepository) FindWithPagination(ctx context.Context, collection str
 		return 0, fmt.Errorf("failed to count documents: %w", err)
 	}
 
+	// Prepare sort options
+	sortBy := "updated_at" // Default sort field
+	if pagination.SortBy != "" {
+		sortBy = pagination.SortBy
+	}
+
+	sortOrder := -1 // Default descending
+	if pagination.SortOrder == "asc" {
+		sortOrder = 1
+	}
+
 	// Find with pagination
 	findOptions := options.Find().
 		SetSkip(skip).
 		SetLimit(int64(pagination.PageSize)).
-		SetSort(map[string]interface{}{"created_at": -1}) // Sort by created_at descending
+		SetSort(map[string]interface{}{sortBy: sortOrder})
 
 	cursor, err := coll.Find(ctx, filter, findOptions)
 	if err != nil {
@@ -85,12 +98,12 @@ func (r *MongoRepository) FindWithPagination(ctx context.Context, collection str
 // UpdateOne updates a single document
 func (r *MongoRepository) UpdateOne(ctx context.Context, collection string, filter map[string]interface{}, update interface{}) error {
 	coll := r.GetCollection(collection)
-	
+
 	// Wrap the update in $set operator for MongoDB
 	updateDoc := map[string]interface{}{
 		"$set": update,
 	}
-	
+
 	_, err := coll.UpdateOne(ctx, filter, updateDoc)
 	return err
 }

@@ -94,13 +94,13 @@ func TestDuplicateFormTemplateInput_Fields(t *testing.T) {
 
 	input := DuplicateFormTemplateInput{
 		SourceID:   sourceID,
-		Name:       "Duplicated Template",
+		NameSuffix: "Copy",
 		CreatedBy:  "user123",
 		MerchantID: "merchant123",
 	}
 
 	assert.Equal(t, sourceID, input.SourceID)
-	assert.Equal(t, "Duplicated Template", input.Name)
+	assert.Equal(t, "Copy", input.NameSuffix)
 	assert.Equal(t, "user123", input.CreatedBy)
 	assert.Equal(t, "merchant123", input.MerchantID)
 }

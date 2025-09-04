@@ -83,6 +83,8 @@ func (s *GRPCFormServer) ListFormTemplates(ctx context.Context, req *pb.ListForm
 		MerchantID: user.Merchant,
 		Page:       int(req.Page),
 		PageSize:   int(req.PageSize),
+		SortBy:     req.SortBy,
+		SortOrder:  req.SortOrder,
 	}
 
 	templates, totalCount, err := s.templateService.ListTemplates(ctx, options)
@@ -279,6 +281,8 @@ func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest
 		MerchantID: user.Merchant,
 		Page:       int(req.Page),
 		PageSize:   int(req.PageSize),
+		SortBy:     req.SortBy,
+		SortOrder:  req.SortOrder,
 	}
 
 	// Add optional filters

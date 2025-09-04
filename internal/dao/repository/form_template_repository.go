@@ -83,8 +83,10 @@ func (r *mongoFormTemplateRepository) FindByMerchantID(ctx context.Context, opti
 
 	var templates []*models.FormTemplate
 	pagination := &PaginationOptions{
-		Page:     options.Page,
-		PageSize: options.PageSize,
+		Page:      options.Page,
+		PageSize:  options.PageSize,
+		SortBy:    options.SortBy,
+		SortOrder: options.SortOrder,
 	}
 
 	count, err := r.mongoRepo.FindWithPagination(ctx, models.FormTemplate{}.TableName(), filter, &templates, pagination)

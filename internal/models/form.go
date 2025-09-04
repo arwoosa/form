@@ -84,12 +84,16 @@ type FormQueryOptions struct {
 	MerchantID string              `json:"merchant_id" validate:"required"`
 	EventID    *primitive.ObjectID `json:"event_id,omitempty"`
 	Page       int                 `json:"page" validate:"min=1"`
-	PageSize   int                 `json:"page_size" validate:"min=1,max=100"`
+	PageSize   int                 `json:"page_size" validate:"min=1,max=2000"`
+	SortBy     string              `json:"sort_by" validate:"omitempty,oneof=name created_at updated_at"`
+	SortOrder  string              `json:"sort_order" validate:"omitempty,oneof=asc desc"`
 }
 
 // FormTemplateQueryOptions represents query options for listing form templates
 type FormTemplateQueryOptions struct {
 	MerchantID string `json:"merchant_id" validate:"required"`
 	Page       int    `json:"page" validate:"min=1"`
-	PageSize   int    `json:"page_size" validate:"min=1,max=100"`
+	PageSize   int    `json:"page_size" validate:"min=1,max=2000"`
+	SortBy     string `json:"sort_by" validate:"omitempty,oneof=name created_at updated_at"`
+	SortOrder  string `json:"sort_order" validate:"omitempty,oneof=asc desc"`
 }
