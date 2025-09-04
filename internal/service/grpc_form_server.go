@@ -2,16 +2,16 @@ package service
 
 import (
 	"context"
-	"fmt"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"google.golang.org/protobuf/types/known/structpb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/arwoosa/form-service/gen/pb/common"
 	pb "github.com/arwoosa/form-service/gen/pb/form"
 	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/vulpes/ezgrpc"
 	"github.com/arwoosa/vulpes/log"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // GRPCFormServer implements the FormService gRPC interface
@@ -29,18 +29,442 @@ func NewGRPCFormServer(templateService *FormTemplateService, formService *FormSe
 	}
 }
 
-// Helper functions for conversion
-func (s *GRPCFormServer) modelToProtoTemplate(template *models.FormTemplate) (*pb.FormTemplate, error) {
-	schema, err := structpb.NewStruct(template.Schema.(map[string]interface{}))
+// CreateFormTemplate creates a new form template
+func (s *GRPCFormServer) CreateFormTemplate(ctx context.Context, req *pb.CreateFormTemplateRequest) (*pb.CreateFormTemplateResponse, error) {
+	user, err := ezgrpc.GetUser(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert schema: %w", err)
+		return nil, err
 	}
 
-	var uiSchema *structpb.Struct
-	if template.UISchema != nil {
-		uiSchema, err = structpb.NewStruct(template.UISchema.(map[string]interface{}))
+	// Convert request to service input
+	input := &models.CreateFormTemplateInput{
+		Name:        req.Name,
+		Description: req.Description,
+		MerchantID:  user.Merchant,
+		CreatedBy:   user.ID,
+	}
+
+	// Convert schema if provided
+	if req.Schema != nil {
+		input.Schema = req.Schema.AsMap()
+	}
+
+	// Convert UI schema if provided
+	if req.Uischema != nil {
+		input.UISchema = req.Uischema.AsMap()
+	}
+
+	template, err := s.templateService.CreateTemplate(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to protobuf
+	pbTemplate, err := s.convertFormTemplateToProto(template)
+	if err != nil {
+		log.Error("Failed to convert template to protobuf", log.Err(err))
+		return nil, err
+	}
+
+	return &pb.CreateFormTemplateResponse{
+		Template: pbTemplate,
+	}, nil
+}
+
+// ListFormTemplates lists form templates with pagination
+func (s *GRPCFormServer) ListFormTemplates(ctx context.Context, req *pb.ListFormTemplatesRequest) (*pb.ListFormTemplatesResponse, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert request to service options
+	options := &models.FormTemplateQueryOptions{
+		MerchantID: user.Merchant,
+		Page:       int(req.Page),
+		PageSize:   int(req.PageSize),
+	}
+
+	templates, totalCount, err := s.templateService.ListTemplates(ctx, options)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert templates to protobuf
+	pbTemplates := make([]*pb.FormTemplate, len(templates))
+	for i, template := range templates {
+		pbTemplate, err := s.convertFormTemplateToProto(template)
 		if err != nil {
-			return nil, fmt.Errorf("failed to convert ui_schema: %w", err)
+			log.Error("Failed to convert template to protobuf", log.Err(err))
+			return nil, err
+		}
+		pbTemplates[i] = pbTemplate
+	}
+
+	// Calculate pagination
+	totalPages := (totalCount + int64(options.PageSize) - 1) / int64(options.PageSize)
+
+	return &pb.ListFormTemplatesResponse{
+		Templates: pbTemplates,
+		Pagination: &common.Pagination{
+			Page:       int32(options.Page),
+			PageSize:   int32(options.PageSize),
+			TotalCount: int32(totalCount),
+			TotalPages: int32(totalPages),
+		},
+	}, nil
+}
+
+// GetFormTemplate gets a form template by ID
+func (s *GRPCFormServer) GetFormTemplate(ctx context.Context, req *common.ID) (*pb.FormTemplate, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	templateID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	template, err := s.templateService.GetTemplate(ctx, templateID, user.Merchant)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertFormTemplateToProto(template)
+}
+
+// UpdateFormTemplate updates a form template
+func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateFormTemplateRequest) (*pb.FormTemplate, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	templateID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	// Convert request to service input
+	input := &models.UpdateFormTemplateInput{
+		ID:          templateID,
+		Name:        req.Name,
+		Description: req.Description,
+		UpdatedBy:   user.ID,
+	}
+
+	// Convert schema if provided
+	if req.Schema != nil {
+		input.Schema = req.Schema.AsMap()
+	}
+
+	// Convert UI schema if provided
+	if req.Uischema != nil {
+		input.UISchema = req.Uischema.AsMap()
+	}
+
+	template, err := s.templateService.UpdateTemplate(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertFormTemplateToProto(template)
+}
+
+// DeleteFormTemplate deletes a form template
+func (s *GRPCFormServer) DeleteFormTemplate(ctx context.Context, req *common.ID) (*emptypb.Empty, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	templateID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	err = s.templateService.DeleteTemplate(ctx, templateID, user.Merchant)
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// DuplicateFormTemplate duplicates a form template
+func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.DuplicateFormTemplateRequest) (*pb.DuplicateFormTemplateResponse, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	sourceID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	input := &models.DuplicateFormTemplateInput{
+		SourceID:   sourceID,
+		Name:       req.Name,
+		CreatedBy:  user.ID,
+		MerchantID: user.Merchant,
+	}
+
+	template, err := s.templateService.DuplicateTemplate(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	pbTemplate, err := s.convertFormTemplateToProto(template)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DuplicateFormTemplateResponse{
+		Template: pbTemplate,
+	}, nil
+}
+
+// CreateForm creates a new form
+func (s *GRPCFormServer) CreateForm(ctx context.Context, req *pb.CreateFormRequest) (*pb.CreateFormResponse, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert request to service input
+	input := &models.CreateFormInput{
+		Name:        req.Name,
+		Description: req.Description,
+		MerchantID:  user.Merchant,
+		CreatedBy:   user.ID,
+	}
+
+	// Convert optional template ID
+	if req.TemplateId != "" {
+		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		input.TemplateID = &templateID
+	}
+
+	// Convert optional event ID
+	if req.EventId != "" {
+		eventID, err := primitive.ObjectIDFromHex(req.EventId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		input.EventID = &eventID
+	}
+
+	// Convert schema if provided
+	if req.Schema != nil {
+		input.Schema = req.Schema.AsMap()
+	}
+
+	// Convert UI schema if provided
+	if req.Uischema != nil {
+		input.UISchema = req.Uischema.AsMap()
+	}
+
+	form, err := s.formService.CreateForm(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert to protobuf
+	pbForm, err := s.convertFormToProto(form)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.CreateFormResponse{
+		Form: pbForm,
+	}, nil
+}
+
+// ListForms lists forms with pagination and filters
+func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest) (*pb.ListFormsResponse, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert request to service options
+	options := &models.FormQueryOptions{
+		MerchantID: user.Merchant,
+		Page:       int(req.Page),
+		PageSize:   int(req.PageSize),
+	}
+
+	// Add optional filters
+	if req.EventId != "" {
+		eventID, err := primitive.ObjectIDFromHex(req.EventId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		options.EventID = &eventID
+	}
+
+	if req.TemplateId != "" {
+		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		options.TemplateID = &templateID
+	}
+
+	forms, totalCount, err := s.formService.ListForms(ctx, options)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert forms to protobuf
+	pbForms := make([]*pb.Form, len(forms))
+	for i, form := range forms {
+		pbForm, err := s.convertFormToProto(form)
+		if err != nil {
+			return nil, err
+		}
+		pbForms[i] = pbForm
+	}
+
+	// Calculate pagination
+	totalPages := (totalCount + int64(options.PageSize) - 1) / int64(options.PageSize)
+
+	return &pb.ListFormsResponse{
+		Forms: pbForms,
+		Pagination: &common.Pagination{
+			Page:       int32(options.Page),
+			PageSize:   int32(options.PageSize),
+			TotalCount: int32(totalCount),
+			TotalPages: int32(totalPages),
+		},
+	}, nil
+}
+
+// GetForm gets a form by ID
+func (s *GRPCFormServer) GetForm(ctx context.Context, req *common.ID) (*pb.Form, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	formID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	form, err := s.formService.GetForm(ctx, formID, user.Merchant)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertFormToProto(form)
+}
+
+// UpdateForm updates a form
+func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormRequest) (*pb.Form, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	formID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	// Convert request to service input
+	input := &models.UpdateFormInput{
+		ID:          formID,
+		Name:        req.Name,
+		Description: req.Description,
+		UpdatedBy:   user.ID,
+	}
+
+	// Convert optional template ID
+	if req.TemplateId != "" {
+		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		input.TemplateID = &templateID
+	}
+
+	// Convert optional event ID
+	if req.EventId != "" {
+		eventID, err := primitive.ObjectIDFromHex(req.EventId)
+		if err != nil {
+			return nil, ErrInvalidObjectID
+		}
+		input.EventID = &eventID
+	}
+
+	// Convert schema if provided
+	if req.Schema != nil {
+		input.Schema = req.Schema.AsMap()
+	}
+
+	// Convert UI schema if provided
+	if req.Uischema != nil {
+		input.UISchema = req.Uischema.AsMap()
+	}
+
+	form, err := s.formService.UpdateForm(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertFormToProto(form)
+}
+
+// DeleteForm deletes a form
+func (s *GRPCFormServer) DeleteForm(ctx context.Context, req *common.ID) (*emptypb.Empty, error) {
+	user, err := ezgrpc.GetUser(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	formID, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	err = s.formService.DeleteForm(ctx, formID, user.Merchant)
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// convertFormTemplateToProto converts a form template model to protobuf
+func (s *GRPCFormServer) convertFormTemplateToProto(template *models.FormTemplate) (*pb.FormTemplate, error) {
+	var schemaStruct *structpb.Struct
+	var uiSchemaStruct *structpb.Struct
+	var err error
+
+	if template.Schema != nil {
+		schemaMap := s.convertMongoDataToMap(template.Schema)
+		if schemaMap != nil {
+			schemaStruct, err = structpb.NewStruct(schemaMap)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	if template.UISchema != nil {
+		uiSchemaMap := s.convertMongoDataToMap(template.UISchema)
+		if uiSchemaMap != nil {
+			uiSchemaStruct, err = structpb.NewStruct(uiSchemaMap)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -49,8 +473,8 @@ func (s *GRPCFormServer) modelToProtoTemplate(template *models.FormTemplate) (*p
 		Name:        template.Name,
 		MerchantId:  template.MerchantID,
 		Description: template.Description,
-		Schema:      schema,
-		UiSchema:    uiSchema,
+		Schema:      schemaStruct,
+		Uischema:    uiSchemaStruct,
 		CreatedAt:   timestamppb.New(template.GetCreatedAt()),
 		CreatedBy:   template.CreatedBy,
 		UpdatedAt:   timestamppb.New(template.GetUpdatedAt()),
@@ -58,618 +482,130 @@ func (s *GRPCFormServer) modelToProtoTemplate(template *models.FormTemplate) (*p
 	}, nil
 }
 
-func (s *GRPCFormServer) modelToProtoForm(form *models.Form) (*pb.Form, error) {
-	schema, err := structpb.NewStruct(form.Schema.(map[string]interface{}))
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert schema: %w", err)
-	}
+// convertFormToProto converts a form model to protobuf
+func (s *GRPCFormServer) convertFormToProto(form *models.Form) (*pb.Form, error) {
+	var schemaStruct *structpb.Struct
+	var uiSchemaStruct *structpb.Struct
+	var err error
 
-	var uiSchema *structpb.Struct
-	if form.UISchema != nil {
-		uiSchema, err = structpb.NewStruct(form.UISchema.(map[string]interface{}))
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert ui_schema: %w", err)
+	if form.Schema != nil {
+		schemaMap := s.convertMongoDataToMap(form.Schema)
+		if schemaMap != nil {
+			schemaStruct, err = structpb.NewStruct(schemaMap)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
-	result := &pb.Form{
+	if form.UISchema != nil {
+		uiSchemaMap := s.convertMongoDataToMap(form.UISchema)
+		if uiSchemaMap != nil {
+			uiSchemaStruct, err = structpb.NewStruct(uiSchemaMap)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	pbForm := &pb.Form{
 		Id:          form.ID.Hex(),
 		Name:        form.Name,
 		MerchantId:  form.MerchantID,
 		Description: form.Description,
-		Schema:      schema,
-		UiSchema:    uiSchema,
+		Schema:      schemaStruct,
+		Uischema:    uiSchemaStruct,
 		CreatedAt:   timestamppb.New(form.GetCreatedAt()),
 		CreatedBy:   form.CreatedBy,
 		UpdatedAt:   timestamppb.New(form.GetUpdatedAt()),
 		UpdatedBy:   form.UpdatedBy,
 	}
 
-	if form.EventID != nil && !form.EventID.IsZero() {
-		result.EventId = form.EventID.Hex()
+	// Add optional fields
+	if form.TemplateID != nil {
+		pbForm.TemplateId = form.TemplateID.Hex()
 	}
 
-	if form.TemplateID != nil && !form.TemplateID.IsZero() {
-		result.TemplateId = form.TemplateID.Hex()
+	if form.EventID != nil {
+		pbForm.EventId = form.EventID.Hex()
 	}
 
-	return result, nil
+	return pbForm, nil
 }
 
-func (s *GRPCFormServer) createSuccessResponse() *common.BaseResponse {
-	return &common.BaseResponse{
-		Success: true,
-		Error:   nil,
-	}
-}
-
-func (s *GRPCFormServer) createErrorResponse(err error) *common.BaseResponse {
-	return &common.BaseResponse{
-		Success: false,
-		Error: &common.ErrorResponse{
-			Code:    "INTERNAL_ERROR",
-			Message: err.Error(),
-		},
-	}
-}
-
-// Form Template Operations
-func (s *GRPCFormServer) CreateFormTemplate(ctx context.Context, req *pb.CreateFormTemplateRequest) (*pb.CreateFormTemplateResponse, error) {
-	log.Info("CreateFormTemplate called", log.String("name", req.Name))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return &pb.CreateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
+// convertMongoDataToMap converts MongoDB primitive types to map[string]interface{}
+func (s *GRPCFormServer) convertMongoDataToMap(data interface{}) map[string]interface{} {
+	if data == nil {
+		return nil
 	}
 
-	// Convert proto request to model input
-	input := &models.CreateFormTemplateInput{
-		Name:        req.Name,
-		Description: req.Description,
-		Schema:      req.Schema.AsMap(),
-		UISchema:    req.UiSchema.AsMap(),
-		CreatedBy:   userInfo.UserID,
-		MerchantID:  userInfo.MerchantID,
-	}
-
-	// Create template
-	template, err := s.templateService.CreateTemplate(ctx, input)
-	if err != nil {
-		log.Error("Failed to create template", log.Err(err))
-		return &pb.CreateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoTemplate, err := s.modelToProtoTemplate(template)
-	if err != nil {
-		log.Error("Failed to convert template to proto", log.Err(err))
-		return &pb.CreateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.CreateFormTemplateResponse{
-		Base:     s.createSuccessResponse(),
-		Template: protoTemplate,
-	}, nil
-}
-
-func (s *GRPCFormServer) GetFormTemplate(ctx context.Context, req *pb.GetFormTemplateRequest) (*pb.GetFormTemplateResponse, error) {
-	log.Info("GetFormTemplate called", log.String("template_id", req.TemplateId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.GetFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-	if err != nil {
-		return &pb.GetFormTemplateResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Get template
-	template, err := s.templateService.GetTemplate(ctx, templateID, userInfo.MerchantID)
-	if err != nil {
-		return &pb.GetFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoTemplate, err := s.modelToProtoTemplate(template)
-	if err != nil {
-		return &pb.GetFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.GetFormTemplateResponse{
-		Base:     s.createSuccessResponse(),
-		Template: protoTemplate,
-	}, nil
-}
-
-func (s *GRPCFormServer) ListFormTemplates(ctx context.Context, req *pb.ListFormTemplatesRequest) (*pb.ListFormTemplatesResponse, error) {
-	log.Info("ListFormTemplates called")
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.ListFormTemplatesResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert request to query options
-	options := &models.FormTemplateQueryOptions{
-		MerchantID: userInfo.MerchantID,
-		Page:       int(req.Page),
-		PageSize:   int(req.PageSize),
-	}
-
-	// List templates
-	templates, totalCount, err := s.templateService.ListTemplates(ctx, options)
-	if err != nil {
-		return &pb.ListFormTemplatesResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoTemplates := make([]*pb.FormTemplate, len(templates))
-	for i, template := range templates {
-		protoTemplate, err := s.modelToProtoTemplate(template)
-		if err != nil {
-			return &pb.ListFormTemplatesResponse{
-				Base: s.createErrorResponse(err),
-			}, ToGRPCError(err)
+	switch v := data.(type) {
+	case primitive.D:
+		result := make(map[string]interface{})
+		for _, elem := range v {
+			result[elem.Key] = s.convertValue(elem.Value)
 		}
-		protoTemplates[i] = protoTemplate
-	}
-
-	// Calculate pagination
-	totalPages := int32((totalCount + int64(options.PageSize) - 1) / int64(options.PageSize))
-	pagination := &common.Pagination{
-		Page:       int32(options.Page),
-		PageSize:   int32(options.PageSize),
-		TotalCount: int32(totalCount),
-		TotalPages: totalPages,
-	}
-
-	return &pb.ListFormTemplatesResponse{
-		Base:       s.createSuccessResponse(),
-		Templates:  protoTemplates,
-		Pagination: pagination,
-	}, nil
-}
-
-func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateFormTemplateRequest) (*pb.UpdateFormTemplateResponse, error) {
-	log.Info("UpdateFormTemplate called", log.String("template_id", req.TemplateId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.UpdateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-	if err != nil {
-		return &pb.UpdateFormTemplateResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Convert request to model input
-	input := &models.UpdateFormTemplateInput{
-		ID:          templateID,
-		Name:        req.Name,
-		Description: req.Description,
-		Schema:      req.Schema.AsMap(),
-		UISchema:    req.UiSchema.AsMap(),
-		UpdatedBy:   userInfo.UserID,
-	}
-
-	// Update template
-	template, err := s.templateService.UpdateTemplate(ctx, input)
-	if err != nil {
-		return &pb.UpdateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoTemplate, err := s.modelToProtoTemplate(template)
-	if err != nil {
-		return &pb.UpdateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.UpdateFormTemplateResponse{
-		Base:     s.createSuccessResponse(),
-		Template: protoTemplate,
-	}, nil
-}
-
-func (s *GRPCFormServer) DeleteFormTemplate(ctx context.Context, req *pb.DeleteFormTemplateRequest) (*pb.DeleteFormTemplateResponse, error) {
-	log.Info("DeleteFormTemplate called", log.String("template_id", req.TemplateId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.DeleteFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-	if err != nil {
-		return &pb.DeleteFormTemplateResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Delete template
-	err = s.templateService.DeleteTemplate(ctx, templateID, userInfo.MerchantID)
-	if err != nil {
-		return &pb.DeleteFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.DeleteFormTemplateResponse{
-		Base: s.createSuccessResponse(),
-	}, nil
-}
-
-func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.DuplicateFormTemplateRequest) (*pb.DuplicateFormTemplateResponse, error) {
-	log.Info("DuplicateFormTemplate called", log.String("template_id", req.TemplateId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.DuplicateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-	if err != nil {
-		return &pb.DuplicateFormTemplateResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Convert request to model input
-	input := &models.DuplicateFormTemplateInput{
-		SourceID:   templateID,
-		Name:       req.Name,
-		CreatedBy:  userInfo.UserID,
-		MerchantID: userInfo.MerchantID,
-	}
-
-	// Duplicate template
-	template, err := s.templateService.DuplicateTemplate(ctx, input)
-	if err != nil {
-		return &pb.DuplicateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoTemplate, err := s.modelToProtoTemplate(template)
-	if err != nil {
-		return &pb.DuplicateFormTemplateResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.DuplicateFormTemplateResponse{
-		Base:     s.createSuccessResponse(),
-		Template: protoTemplate,
-	}, nil
-}
-
-// Form Operations (continuing in the same pattern)
-func (s *GRPCFormServer) CreateForm(ctx context.Context, req *pb.CreateFormRequest) (*pb.CreateFormResponse, error) {
-	log.Info("CreateForm called", log.String("name", req.Name))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.CreateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert request to model input
-	input := &models.CreateFormInput{
-		Name:        req.Name,
-		Description: req.Description,
-		Schema:      req.Schema.AsMap(),
-		UISchema:    req.UiSchema.AsMap(),
-		CreatedBy:   userInfo.UserID,
-		MerchantID:  userInfo.MerchantID,
-	}
-
-	// Handle optional EventID
-	if req.EventId != "" {
-		eventID, err := primitive.ObjectIDFromHex(req.EventId)
-		if err != nil {
-			return &pb.CreateFormResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+		return result
+	case map[string]interface{}:
+		// Already correct type, but need to recursively process values
+		result := make(map[string]interface{})
+		for key, value := range v {
+			result[key] = s.convertValue(value)
 		}
-		input.EventID = &eventID
-	}
-
-	// Handle optional TemplateID
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return &pb.CreateFormResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+		return result
+	case primitive.M:
+		result := make(map[string]interface{})
+		for key, value := range v {
+			result[key] = s.convertValue(value)
 		}
-		input.TemplateID = &templateID
+		return result
+	default:
+		// If not a map type, try to convert to single value map
+		if converted := s.convertValue(v); converted != nil {
+			return map[string]interface{}{"value": converted}
+		}
+		return nil
 	}
-
-	// Create form
-	form, err := s.formService.CreateForm(ctx, input)
-	if err != nil {
-		return &pb.CreateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoForm, err := s.modelToProtoForm(form)
-	if err != nil {
-		return &pb.CreateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.CreateFormResponse{
-		Base: s.createSuccessResponse(),
-		Form: protoForm,
-	}, nil
 }
 
-func (s *GRPCFormServer) GetForm(ctx context.Context, req *pb.GetFormRequest) (*pb.GetFormResponse, error) {
-	log.Info("GetForm called", log.String("form_id", req.FormId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.GetFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
+// convertValue converts single MongoDB values, handling nested primitive.D, primitive.A etc
+func (s *GRPCFormServer) convertValue(data interface{}) interface{} {
+	if data == nil {
+		return nil
 	}
 
-	// Convert ID
-	formID, err := primitive.ObjectIDFromHex(req.FormId)
-	if err != nil {
-		return &pb.GetFormResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Get form
-	form, err := s.formService.GetForm(ctx, formID, userInfo.MerchantID)
-	if err != nil {
-		return &pb.GetFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoForm, err := s.modelToProtoForm(form)
-	if err != nil {
-		return &pb.GetFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.GetFormResponse{
-		Base: s.createSuccessResponse(),
-		Form: protoForm,
-	}, nil
-}
-
-func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest) (*pb.ListFormsResponse, error) {
-	log.Info("ListForms called")
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.ListFormsResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert request to query options
-	options := &models.FormQueryOptions{
-		MerchantID: userInfo.MerchantID,
-		Page:       int(req.Page),
-		PageSize:   int(req.PageSize),
-	}
-
-	// Handle optional filters
-	if req.EventId != "" {
-		eventID, err := primitive.ObjectIDFromHex(req.EventId)
-		if err != nil {
-			return &pb.ListFormsResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+	switch v := data.(type) {
+	case primitive.D:
+		result := make(map[string]interface{})
+		for _, elem := range v {
+			result[elem.Key] = s.convertValue(elem.Value)
 		}
-		options.EventID = &eventID
-	}
-
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return &pb.ListFormsResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+		return result
+	case primitive.A:
+		result := make([]interface{}, len(v))
+		for i, elem := range v {
+			result[i] = s.convertValue(elem)
 		}
-		options.TemplateID = &templateID
-	}
-
-	// List forms
-	forms, totalCount, err := s.formService.ListForms(ctx, options)
-	if err != nil {
-		return &pb.ListFormsResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoForms := make([]*pb.Form, len(forms))
-	for i, form := range forms {
-		protoForm, err := s.modelToProtoForm(form)
-		if err != nil {
-			return &pb.ListFormsResponse{
-				Base: s.createErrorResponse(err),
-			}, ToGRPCError(err)
+		return result
+	case primitive.M:
+		result := make(map[string]interface{})
+		for key, value := range v {
+			result[key] = s.convertValue(value)
 		}
-		protoForms[i] = protoForm
-	}
-
-	// Calculate pagination
-	totalPages := int32((totalCount + int64(options.PageSize) - 1) / int64(options.PageSize))
-	pagination := &common.Pagination{
-		Page:       int32(options.Page),
-		PageSize:   int32(options.PageSize),
-		TotalCount: int32(totalCount),
-		TotalPages: totalPages,
-	}
-
-	return &pb.ListFormsResponse{
-		Base:       s.createSuccessResponse(),
-		Forms:      protoForms,
-		Pagination: pagination,
-	}, nil
-}
-
-func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormRequest) (*pb.UpdateFormResponse, error) {
-	log.Info("UpdateForm called", log.String("form_id", req.FormId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.UpdateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	formID, err := primitive.ObjectIDFromHex(req.FormId)
-	if err != nil {
-		return &pb.UpdateFormResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Convert request to model input
-	input := &models.UpdateFormInput{
-		ID:          formID,
-		Name:        req.Name,
-		Description: req.Description,
-		Schema:      req.Schema.AsMap(),
-		UISchema:    req.UiSchema.AsMap(),
-		UpdatedBy:   userInfo.UserID,
-	}
-
-	// Handle optional EventID
-	if req.EventId != "" {
-		eventID, err := primitive.ObjectIDFromHex(req.EventId)
-		if err != nil {
-			return &pb.UpdateFormResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+		return result
+	case map[string]interface{}:
+		result := make(map[string]interface{})
+		for key, value := range v {
+			result[key] = s.convertValue(value)
 		}
-		input.EventID = &eventID
-	}
-
-	// Handle optional TemplateID
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return &pb.UpdateFormResponse{
-				Base: s.createErrorResponse(ErrInvalidInput),
-			}, ToGRPCError(ErrInvalidInput)
+		return result
+	case []interface{}:
+		result := make([]interface{}, len(v))
+		for i, elem := range v {
+			result[i] = s.convertValue(elem)
 		}
-		input.TemplateID = &templateID
+		return result
+	default:
+		return data
 	}
-
-	// Update form
-	form, err := s.formService.UpdateForm(ctx, input)
-	if err != nil {
-		return &pb.UpdateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert to proto
-	protoForm, err := s.modelToProtoForm(form)
-	if err != nil {
-		return &pb.UpdateFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.UpdateFormResponse{
-		Base: s.createSuccessResponse(),
-		Form: protoForm,
-	}, nil
-}
-
-func (s *GRPCFormServer) DeleteForm(ctx context.Context, req *pb.DeleteFormRequest) (*pb.DeleteFormResponse, error) {
-	log.Info("DeleteForm called", log.String("form_id", req.FormId))
-
-	// Get user info
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		return &pb.DeleteFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	// Convert ID
-	formID, err := primitive.ObjectIDFromHex(req.FormId)
-	if err != nil {
-		return &pb.DeleteFormResponse{
-			Base: s.createErrorResponse(ErrInvalidInput),
-		}, ToGRPCError(ErrInvalidInput)
-	}
-
-	// Delete form
-	err = s.formService.DeleteForm(ctx, formID, userInfo.MerchantID)
-	if err != nil {
-		return &pb.DeleteFormResponse{
-			Base: s.createErrorResponse(err),
-		}, ToGRPCError(err)
-	}
-
-	return &pb.DeleteFormResponse{
-		Base: s.createSuccessResponse(),
-	}, nil
 }

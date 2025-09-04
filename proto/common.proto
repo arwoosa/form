@@ -4,9 +4,6 @@ package form.common;
 
 option go_package = "github.com/arwoosa/form-service/gen/pb/common";
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
-
 // Pagination for list responses
 message Pagination {
     int32 page = 1;
@@ -15,15 +12,7 @@ message Pagination {
     int32 total_pages = 4;
 }
 
-// Standard error response
-message ErrorResponse {
-    string code = 1;
-    string message = 2;
-    map<string, string> details = 3;
-}
-
-// Base response wrapper
-message BaseResponse {
-    bool success = 1;
-    ErrorResponse error = 2;
+// Common ID message
+message ID {
+    string id = 1;
 }

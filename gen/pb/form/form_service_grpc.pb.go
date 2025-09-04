@@ -8,9 +8,11 @@ package form
 
 import (
 	context "context"
+	common "github.com/arwoosa/form-service/gen/pb/common"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -36,19 +38,28 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FormServiceClient interface {
-	// Form Template Operations
+	// Creates a new form template
 	CreateFormTemplate(ctx context.Context, in *CreateFormTemplateRequest, opts ...grpc.CallOption) (*CreateFormTemplateResponse, error)
+	// Lists form templates with pagination
 	ListFormTemplates(ctx context.Context, in *ListFormTemplatesRequest, opts ...grpc.CallOption) (*ListFormTemplatesResponse, error)
-	GetFormTemplate(ctx context.Context, in *GetFormTemplateRequest, opts ...grpc.CallOption) (*GetFormTemplateResponse, error)
-	UpdateFormTemplate(ctx context.Context, in *UpdateFormTemplateRequest, opts ...grpc.CallOption) (*UpdateFormTemplateResponse, error)
-	DeleteFormTemplate(ctx context.Context, in *DeleteFormTemplateRequest, opts ...grpc.CallOption) (*DeleteFormTemplateResponse, error)
+	// Gets a single form template by ID
+	GetFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*FormTemplate, error)
+	// Updates an existing form template
+	UpdateFormTemplate(ctx context.Context, in *UpdateFormTemplateRequest, opts ...grpc.CallOption) (*FormTemplate, error)
+	// Deletes a form template by ID
+	DeleteFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Duplicates an existing form template
 	DuplicateFormTemplate(ctx context.Context, in *DuplicateFormTemplateRequest, opts ...grpc.CallOption) (*DuplicateFormTemplateResponse, error)
-	// Form Operations
+	// Creates a new form, either from a template or standalone
 	CreateForm(ctx context.Context, in *CreateFormRequest, opts ...grpc.CallOption) (*CreateFormResponse, error)
+	// Lists forms with pagination
 	ListForms(ctx context.Context, in *ListFormsRequest, opts ...grpc.CallOption) (*ListFormsResponse, error)
-	GetForm(ctx context.Context, in *GetFormRequest, opts ...grpc.CallOption) (*GetFormResponse, error)
-	UpdateForm(ctx context.Context, in *UpdateFormRequest, opts ...grpc.CallOption) (*UpdateFormResponse, error)
-	DeleteForm(ctx context.Context, in *DeleteFormRequest, opts ...grpc.CallOption) (*DeleteFormResponse, error)
+	// Gets a single form by ID
+	GetForm(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*Form, error)
+	// Updates an existing form
+	UpdateForm(ctx context.Context, in *UpdateFormRequest, opts ...grpc.CallOption) (*Form, error)
+	// Deletes a form by ID
+	DeleteForm(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type formServiceClient struct {
@@ -77,8 +88,8 @@ func (c *formServiceClient) ListFormTemplates(ctx context.Context, in *ListFormT
 	return out, nil
 }
 
-func (c *formServiceClient) GetFormTemplate(ctx context.Context, in *GetFormTemplateRequest, opts ...grpc.CallOption) (*GetFormTemplateResponse, error) {
-	out := new(GetFormTemplateResponse)
+func (c *formServiceClient) GetFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*FormTemplate, error) {
+	out := new(FormTemplate)
 	err := c.cc.Invoke(ctx, FormService_GetFormTemplate_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -86,8 +97,8 @@ func (c *formServiceClient) GetFormTemplate(ctx context.Context, in *GetFormTemp
 	return out, nil
 }
 
-func (c *formServiceClient) UpdateFormTemplate(ctx context.Context, in *UpdateFormTemplateRequest, opts ...grpc.CallOption) (*UpdateFormTemplateResponse, error) {
-	out := new(UpdateFormTemplateResponse)
+func (c *formServiceClient) UpdateFormTemplate(ctx context.Context, in *UpdateFormTemplateRequest, opts ...grpc.CallOption) (*FormTemplate, error) {
+	out := new(FormTemplate)
 	err := c.cc.Invoke(ctx, FormService_UpdateFormTemplate_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -95,8 +106,8 @@ func (c *formServiceClient) UpdateFormTemplate(ctx context.Context, in *UpdateFo
 	return out, nil
 }
 
-func (c *formServiceClient) DeleteFormTemplate(ctx context.Context, in *DeleteFormTemplateRequest, opts ...grpc.CallOption) (*DeleteFormTemplateResponse, error) {
-	out := new(DeleteFormTemplateResponse)
+func (c *formServiceClient) DeleteFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, FormService_DeleteFormTemplate_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -131,8 +142,8 @@ func (c *formServiceClient) ListForms(ctx context.Context, in *ListFormsRequest,
 	return out, nil
 }
 
-func (c *formServiceClient) GetForm(ctx context.Context, in *GetFormRequest, opts ...grpc.CallOption) (*GetFormResponse, error) {
-	out := new(GetFormResponse)
+func (c *formServiceClient) GetForm(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*Form, error) {
+	out := new(Form)
 	err := c.cc.Invoke(ctx, FormService_GetForm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -140,8 +151,8 @@ func (c *formServiceClient) GetForm(ctx context.Context, in *GetFormRequest, opt
 	return out, nil
 }
 
-func (c *formServiceClient) UpdateForm(ctx context.Context, in *UpdateFormRequest, opts ...grpc.CallOption) (*UpdateFormResponse, error) {
-	out := new(UpdateFormResponse)
+func (c *formServiceClient) UpdateForm(ctx context.Context, in *UpdateFormRequest, opts ...grpc.CallOption) (*Form, error) {
+	out := new(Form)
 	err := c.cc.Invoke(ctx, FormService_UpdateForm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -149,8 +160,8 @@ func (c *formServiceClient) UpdateForm(ctx context.Context, in *UpdateFormReques
 	return out, nil
 }
 
-func (c *formServiceClient) DeleteForm(ctx context.Context, in *DeleteFormRequest, opts ...grpc.CallOption) (*DeleteFormResponse, error) {
-	out := new(DeleteFormResponse)
+func (c *formServiceClient) DeleteForm(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, FormService_DeleteForm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -162,19 +173,28 @@ func (c *formServiceClient) DeleteForm(ctx context.Context, in *DeleteFormReques
 // All implementations must embed UnimplementedFormServiceServer
 // for forward compatibility
 type FormServiceServer interface {
-	// Form Template Operations
+	// Creates a new form template
 	CreateFormTemplate(context.Context, *CreateFormTemplateRequest) (*CreateFormTemplateResponse, error)
+	// Lists form templates with pagination
 	ListFormTemplates(context.Context, *ListFormTemplatesRequest) (*ListFormTemplatesResponse, error)
-	GetFormTemplate(context.Context, *GetFormTemplateRequest) (*GetFormTemplateResponse, error)
-	UpdateFormTemplate(context.Context, *UpdateFormTemplateRequest) (*UpdateFormTemplateResponse, error)
-	DeleteFormTemplate(context.Context, *DeleteFormTemplateRequest) (*DeleteFormTemplateResponse, error)
+	// Gets a single form template by ID
+	GetFormTemplate(context.Context, *common.ID) (*FormTemplate, error)
+	// Updates an existing form template
+	UpdateFormTemplate(context.Context, *UpdateFormTemplateRequest) (*FormTemplate, error)
+	// Deletes a form template by ID
+	DeleteFormTemplate(context.Context, *common.ID) (*emptypb.Empty, error)
+	// Duplicates an existing form template
 	DuplicateFormTemplate(context.Context, *DuplicateFormTemplateRequest) (*DuplicateFormTemplateResponse, error)
-	// Form Operations
+	// Creates a new form, either from a template or standalone
 	CreateForm(context.Context, *CreateFormRequest) (*CreateFormResponse, error)
+	// Lists forms with pagination
 	ListForms(context.Context, *ListFormsRequest) (*ListFormsResponse, error)
-	GetForm(context.Context, *GetFormRequest) (*GetFormResponse, error)
-	UpdateForm(context.Context, *UpdateFormRequest) (*UpdateFormResponse, error)
-	DeleteForm(context.Context, *DeleteFormRequest) (*DeleteFormResponse, error)
+	// Gets a single form by ID
+	GetForm(context.Context, *common.ID) (*Form, error)
+	// Updates an existing form
+	UpdateForm(context.Context, *UpdateFormRequest) (*Form, error)
+	// Deletes a form by ID
+	DeleteForm(context.Context, *common.ID) (*emptypb.Empty, error)
 	mustEmbedUnimplementedFormServiceServer()
 }
 
@@ -188,13 +208,13 @@ func (UnimplementedFormServiceServer) CreateFormTemplate(context.Context, *Creat
 func (UnimplementedFormServiceServer) ListFormTemplates(context.Context, *ListFormTemplatesRequest) (*ListFormTemplatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFormTemplates not implemented")
 }
-func (UnimplementedFormServiceServer) GetFormTemplate(context.Context, *GetFormTemplateRequest) (*GetFormTemplateResponse, error) {
+func (UnimplementedFormServiceServer) GetFormTemplate(context.Context, *common.ID) (*FormTemplate, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFormTemplate not implemented")
 }
-func (UnimplementedFormServiceServer) UpdateFormTemplate(context.Context, *UpdateFormTemplateRequest) (*UpdateFormTemplateResponse, error) {
+func (UnimplementedFormServiceServer) UpdateFormTemplate(context.Context, *UpdateFormTemplateRequest) (*FormTemplate, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateFormTemplate not implemented")
 }
-func (UnimplementedFormServiceServer) DeleteFormTemplate(context.Context, *DeleteFormTemplateRequest) (*DeleteFormTemplateResponse, error) {
+func (UnimplementedFormServiceServer) DeleteFormTemplate(context.Context, *common.ID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFormTemplate not implemented")
 }
 func (UnimplementedFormServiceServer) DuplicateFormTemplate(context.Context, *DuplicateFormTemplateRequest) (*DuplicateFormTemplateResponse, error) {
@@ -206,13 +226,13 @@ func (UnimplementedFormServiceServer) CreateForm(context.Context, *CreateFormReq
 func (UnimplementedFormServiceServer) ListForms(context.Context, *ListFormsRequest) (*ListFormsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListForms not implemented")
 }
-func (UnimplementedFormServiceServer) GetForm(context.Context, *GetFormRequest) (*GetFormResponse, error) {
+func (UnimplementedFormServiceServer) GetForm(context.Context, *common.ID) (*Form, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetForm not implemented")
 }
-func (UnimplementedFormServiceServer) UpdateForm(context.Context, *UpdateFormRequest) (*UpdateFormResponse, error) {
+func (UnimplementedFormServiceServer) UpdateForm(context.Context, *UpdateFormRequest) (*Form, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateForm not implemented")
 }
-func (UnimplementedFormServiceServer) DeleteForm(context.Context, *DeleteFormRequest) (*DeleteFormResponse, error) {
+func (UnimplementedFormServiceServer) DeleteForm(context.Context, *common.ID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteForm not implemented")
 }
 func (UnimplementedFormServiceServer) mustEmbedUnimplementedFormServiceServer() {}
@@ -265,7 +285,7 @@ func _FormService_ListFormTemplates_Handler(srv interface{}, ctx context.Context
 }
 
 func _FormService_GetFormTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFormTemplateRequest)
+	in := new(common.ID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -277,7 +297,7 @@ func _FormService_GetFormTemplate_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: FormService_GetFormTemplate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FormServiceServer).GetFormTemplate(ctx, req.(*GetFormTemplateRequest))
+		return srv.(FormServiceServer).GetFormTemplate(ctx, req.(*common.ID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -301,7 +321,7 @@ func _FormService_UpdateFormTemplate_Handler(srv interface{}, ctx context.Contex
 }
 
 func _FormService_DeleteFormTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteFormTemplateRequest)
+	in := new(common.ID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -313,7 +333,7 @@ func _FormService_DeleteFormTemplate_Handler(srv interface{}, ctx context.Contex
 		FullMethod: FormService_DeleteFormTemplate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FormServiceServer).DeleteFormTemplate(ctx, req.(*DeleteFormTemplateRequest))
+		return srv.(FormServiceServer).DeleteFormTemplate(ctx, req.(*common.ID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -373,7 +393,7 @@ func _FormService_ListForms_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _FormService_GetForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFormRequest)
+	in := new(common.ID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -385,7 +405,7 @@ func _FormService_GetForm_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: FormService_GetForm_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FormServiceServer).GetForm(ctx, req.(*GetFormRequest))
+		return srv.(FormServiceServer).GetForm(ctx, req.(*common.ID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -409,7 +429,7 @@ func _FormService_UpdateForm_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _FormService_DeleteForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteFormRequest)
+	in := new(common.ID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -421,7 +441,7 @@ func _FormService_DeleteForm_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: FormService_DeleteForm_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FormServiceServer).DeleteForm(ctx, req.(*DeleteFormRequest))
+		return srv.(FormServiceServer).DeleteForm(ctx, req.(*common.ID))
 	}
 	return interceptor(ctx, in, info, handler)
 }

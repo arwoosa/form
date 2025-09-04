@@ -4,15 +4,16 @@ package form.service;
 
 option go_package = "github.com/arwoosa/form-service/gen/pb/form";
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
-import "validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
 import "proto/common.proto";
+import "validate/validate.proto";
 
-// Form Service - Manages form templates and forms
+// FormService - Manages form templates and forms.
 service FormService {
-    // Form Template Operations
+    // Creates a new form template
     rpc CreateFormTemplate(CreateFormTemplateRequest) returns (CreateFormTemplateResponse) {
         option (google.api.http) = {
             post: "/form_templates"
@@ -20,39 +21,44 @@ service FormService {
         };
     }
     
+    // Lists form templates with pagination
     rpc ListFormTemplates(ListFormTemplatesRequest) returns (ListFormTemplatesResponse) {
         option (google.api.http) = {
             get: "/form_templates"
         };
     }
     
-    rpc GetFormTemplate(GetFormTemplateRequest) returns (GetFormTemplateResponse) {
+    // Gets a single form template by ID
+    rpc GetFormTemplate(form.common.ID) returns (FormTemplate) {
         option (google.api.http) = {
-            get: "/form_templates/{template_id}"
+            get: "/form_templates/{id}"
         };
     }
     
-    rpc UpdateFormTemplate(UpdateFormTemplateRequest) returns (UpdateFormTemplateResponse) {
+    // Updates an existing form template
+    rpc UpdateFormTemplate(UpdateFormTemplateRequest) returns (FormTemplate) {
         option (google.api.http) = {
-            put: "/form_templates/{template_id}"
+            put: "/form_templates/{id}"
             body: "*"
         };
     }
     
-    rpc DeleteFormTemplate(DeleteFormTemplateRequest) returns (DeleteFormTemplateResponse) {
+    // Deletes a form template by ID
+    rpc DeleteFormTemplate(form.common.ID) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            delete: "/form_templates/{template_id}"
+            delete: "/form_templates/{id}"
         };
     }
     
+    // Duplicates an existing form template
     rpc DuplicateFormTemplate(DuplicateFormTemplateRequest) returns (DuplicateFormTemplateResponse) {
         option (google.api.http) = {
-            post: "/form_templates/{template_id}/duplicate"
+            post: "/form_templates/{id}/duplicate"
             body: "*"
         };
     }
     
-    // Form Operations
+    // Creates a new form, either from a template or standalone
     rpc CreateForm(CreateFormRequest) returns (CreateFormResponse) {
         option (google.api.http) = {
             post: "/forms"
@@ -60,28 +66,32 @@ service FormService {
         };
     }
     
+    // Lists forms with pagination
     rpc ListForms(ListFormsRequest) returns (ListFormsResponse) {
         option (google.api.http) = {
             get: "/forms"
         };
     }
     
-    rpc GetForm(GetFormRequest) returns (GetFormResponse) {
+    // Gets a single form by ID
+    rpc GetForm(form.common.ID) returns (Form) {
         option (google.api.http) = {
-            get: "/forms/{form_id}"
+            get: "/forms/{id}"
         };
     }
     
-    rpc UpdateForm(UpdateFormRequest) returns (UpdateFormResponse) {
+    // Updates an existing form
+    rpc UpdateForm(UpdateFormRequest) returns (Form) {
         option (google.api.http) = {
-            put: "/forms/{form_id}"
+            put: "/forms/{id}"
             body: "*"
         };
     }
     
-    rpc DeleteForm(DeleteFormRequest) returns (DeleteFormResponse) {
+    // Deletes a form by ID
+    rpc DeleteForm(form.common.ID) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            delete: "/forms/{form_id}"
+            delete: "/forms/{id}"
         };
     }
 }
@@ -93,7 +103,7 @@ message FormTemplate {
     string merchant_id = 3;
     string description = 4;
     google.protobuf.Struct schema = 5;    // JSON Schema defining data structure and validation rules
-    google.protobuf.Struct ui_schema = 6; // UI Schema defining form layout and appearance
+    google.protobuf.Struct uischema = 6; // UI Schema defining form layout and appearance
     google.protobuf.Timestamp created_at = 7;
     string created_by = 8;
     google.protobuf.Timestamp updated_at = 9;
@@ -104,12 +114,11 @@ message CreateFormTemplateRequest {
     string name = 1 [(validate.rules).string.min_len = 1];
     string description = 2;
     google.protobuf.Struct schema = 3;
-    google.protobuf.Struct ui_schema = 4;
+    google.protobuf.Struct uischema = 4;
 }
 
 message CreateFormTemplateResponse {
-    form.common.BaseResponse base = 1;
-    FormTemplate template = 2;
+    FormTemplate template = 1;
 }
 
 message ListFormTemplatesRequest {
@@ -118,49 +127,26 @@ message ListFormTemplatesRequest {
 }
 
 message ListFormTemplatesResponse {
-    form.common.BaseResponse base = 1;
-    repeated FormTemplate templates = 2;
-    form.common.Pagination pagination = 3;
-}
-
-message GetFormTemplateRequest {
-    string template_id = 1 [(validate.rules).string.min_len = 1];
-}
-
-message GetFormTemplateResponse {
-    form.common.BaseResponse base = 1;
-    FormTemplate template = 2;
+    repeated FormTemplate templates = 1;
+    form.common.Pagination pagination = 2;
 }
 
 message UpdateFormTemplateRequest {
-    string template_id = 1 [(validate.rules).string.min_len = 1];
+    string id = 1 [(validate.rules).string.min_len = 1];
     string name = 2 [(validate.rules).string.min_len = 1];
     string description = 3;
     google.protobuf.Struct schema = 4;
-    google.protobuf.Struct ui_schema = 5;
+    google.protobuf.Struct uischema = 5;
 }
 
-message UpdateFormTemplateResponse {
-    form.common.BaseResponse base = 1;
-    FormTemplate template = 2;
-}
-
-message DeleteFormTemplateRequest {
-    string template_id = 1 [(validate.rules).string.min_len = 1];
-}
-
-message DeleteFormTemplateResponse {
-    form.common.BaseResponse base = 1;
-}
 
 message DuplicateFormTemplateRequest {
-    string template_id = 1 [(validate.rules).string.min_len = 1];
+    string id = 1 [(validate.rules).string.min_len = 1];
     string name = 2 [(validate.rules).string.min_len = 1];
 }
 
 message DuplicateFormTemplateResponse {
-    form.common.BaseResponse base = 1;
-    FormTemplate template = 2;
+    FormTemplate template = 1;
 }
 
 // Form Messages
@@ -172,7 +158,7 @@ message Form {
     string template_id = 5; // Optional reference to a form template
     string description = 6;
     google.protobuf.Struct schema = 7;    // JSON Schema defining data structure and validation rules
-    google.protobuf.Struct ui_schema = 8; // UI Schema defining form layout and appearance
+    google.protobuf.Struct uischema = 8; // UI Schema defining form layout and appearance
     google.protobuf.Timestamp created_at = 9;
     string created_by = 10;
     google.protobuf.Timestamp updated_at = 11;
@@ -185,12 +171,11 @@ message CreateFormRequest {
     string template_id = 3; // Optional
     string description = 4;
     google.protobuf.Struct schema = 5;
-    google.protobuf.Struct ui_schema = 6;
+    google.protobuf.Struct uischema = 6;
 }
 
 message CreateFormResponse {
-    form.common.BaseResponse base = 1;
-    Form form = 2;
+    Form form = 1;
 }
 
 message ListFormsRequest {
@@ -201,39 +186,17 @@ message ListFormsRequest {
 }
 
 message ListFormsResponse {
-    form.common.BaseResponse base = 1;
-    repeated Form forms = 2;
-    form.common.Pagination pagination = 3;
+    repeated Form forms = 1;
+    form.common.Pagination pagination = 2;
 }
 
-message GetFormRequest {
-    string form_id = 1 [(validate.rules).string.min_len = 1];
-}
-
-message GetFormResponse {
-    form.common.BaseResponse base = 1;
-    Form form = 2;
-}
 
 message UpdateFormRequest {
-    string form_id = 1 [(validate.rules).string.min_len = 1];
+    string id = 1 [(validate.rules).string.min_len = 1];
     string name = 2 [(validate.rules).string.min_len = 1];
     string event_id = 3;    // Optional
     string template_id = 4; // Optional
     string description = 5;
     google.protobuf.Struct schema = 6;
-    google.protobuf.Struct ui_schema = 7;
-}
-
-message UpdateFormResponse {
-    form.common.BaseResponse base = 1;
-    Form form = 2;
-}
-
-message DeleteFormRequest {
-    string form_id = 1 [(validate.rules).string.min_len = 1];
-}
-
-message DeleteFormResponse {
-    form.common.BaseResponse base = 1;
+    google.protobuf.Struct uischema = 7;
 }

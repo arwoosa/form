@@ -46,7 +46,7 @@ func registerFormServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
 	log.Info("Form services initialized with MongoDB connection")
 
 	// Initialize repositories
-	mongoRepo := repository.NewMongoRepository(mongoClient, appConfig.DB)
+	mongoRepo := repository.NewMongoRepository(mongoClient, appConfig.MongodbConfig.DB)
 	templateRepo := repository.NewFormTemplateRepository(mongoRepo)
 	formRepo := repository.NewFormRepository(mongoRepo)
 

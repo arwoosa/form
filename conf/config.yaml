@@ -9,7 +9,7 @@ log:
 mongodb:
   host: "127.0.0.1"
   port: 27017
-  db: "partivo_forms"
+  db: "partivo"
 
 keto:
   write_addr: "192.168.1.123:4467"
@@ -25,7 +25,7 @@ pagination:
   max_page_size: 100
 
 business_rules:
-  max_templates_per_merchant: 10
+  max_templates_per_merchant: 3
 
 
 

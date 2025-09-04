@@ -70,7 +70,7 @@ type CreateFormInput struct {
 	EventID     *primitive.ObjectID `json:"event_id,omitempty"`
 	TemplateID  *primitive.ObjectID `json:"template_id,omitempty"`
 	Description string              `json:"description" validate:"max=500"`
-	Schema      interface{}         `json:"schema" validate:"required"`
+	Schema      interface{}         `json:"schema"`
 	UISchema    interface{}         `json:"ui_schema"`
 	CreatedBy   string              `json:"created_by" validate:"required"`
 	MerchantID  string              `json:"merchant_id" validate:"required"`

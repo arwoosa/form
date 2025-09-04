@@ -52,17 +52,31 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 		return nil, ErrUnauthorized
 	}
 
-	// Validate template reference if provided
+	var formSchema, formUISchema interface{}
+
+	// Handle template-based form creation
 	if input.TemplateID != nil && !input.TemplateID.IsZero() {
-		exists, err := s.templateRepo.Exists(ctx, *input.TemplateID, input.MerchantID)
+		// Validate template exists and copy schema
+		template, err := s.templateRepo.FindByID(ctx, *input.TemplateID, input.MerchantID)
 		if err != nil {
-			log.Error("Failed to validate template", log.Err(err))
-			return nil, ErrInternalError
-		}
-		if !exists {
 			log.Error("Referenced template not found", log.String("template_id", input.TemplateID.Hex()))
 			return nil, ErrFormInvalidTemplate
 		}
+		
+		// Copy schema and UI schema from template
+		formSchema = template.Schema
+		formUISchema = template.UISchema
+		
+		log.Info("Creating form from template", 
+			log.String("template_id", input.TemplateID.Hex()),
+			log.String("form_name", input.Name))
+	} else {
+		// Direct form creation - use provided schema
+		formSchema = input.Schema
+		formUISchema = input.UISchema
+		
+		log.Info("Creating form without template", 
+			log.String("form_name", input.Name))
 	}
 
 	// Create form model
@@ -73,8 +87,8 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 		MerchantID:  input.MerchantID,
 		TemplateID:  input.TemplateID,
 		Description: input.Description,
-		Schema:      input.Schema,
-		UISchema:    input.UISchema,
+		Schema:      formSchema,
+		UISchema:    formUISchema,
 		CreatedBy:   input.CreatedBy,
 		UpdatedBy:   input.CreatedBy,
 	}

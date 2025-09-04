@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/arwoosa/form-service/gen/pb/common"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
@@ -94,7 +95,7 @@ func local_request_FormService_ListFormTemplates_0(ctx context.Context, marshale
 }
 
 func request_FormService_GetFormTemplate_0(ctx context.Context, marshaler runtime.Marshaler, client FormServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetFormTemplateRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -104,14 +105,14 @@ func request_FormService_GetFormTemplate_0(ctx context.Context, marshaler runtim
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.GetFormTemplate(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -120,7 +121,7 @@ func request_FormService_GetFormTemplate_0(ctx context.Context, marshaler runtim
 }
 
 func local_request_FormService_GetFormTemplate_0(ctx context.Context, marshaler runtime.Marshaler, server FormServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetFormTemplateRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -130,14 +131,14 @@ func local_request_FormService_GetFormTemplate_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.GetFormTemplate(ctx, &protoReq)
@@ -160,14 +161,14 @@ func request_FormService_UpdateFormTemplate_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.UpdateFormTemplate(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -190,14 +191,14 @@ func local_request_FormService_UpdateFormTemplate_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.UpdateFormTemplate(ctx, &protoReq)
@@ -206,7 +207,7 @@ func local_request_FormService_UpdateFormTemplate_0(ctx context.Context, marshal
 }
 
 func request_FormService_DeleteFormTemplate_0(ctx context.Context, marshaler runtime.Marshaler, client FormServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteFormTemplateRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -216,14 +217,14 @@ func request_FormService_DeleteFormTemplate_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.DeleteFormTemplate(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -232,7 +233,7 @@ func request_FormService_DeleteFormTemplate_0(ctx context.Context, marshaler run
 }
 
 func local_request_FormService_DeleteFormTemplate_0(ctx context.Context, marshaler runtime.Marshaler, server FormServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteFormTemplateRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -242,14 +243,14 @@ func local_request_FormService_DeleteFormTemplate_0(ctx context.Context, marshal
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.DeleteFormTemplate(ctx, &protoReq)
@@ -272,14 +273,14 @@ func request_FormService_DuplicateFormTemplate_0(ctx context.Context, marshaler 
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.DuplicateFormTemplate(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -302,14 +303,14 @@ func local_request_FormService_DuplicateFormTemplate_0(ctx context.Context, mars
 		_   = err
 	)
 
-	val, ok = pathParams["template_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "template_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.TemplateId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "template_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.DuplicateFormTemplate(ctx, &protoReq)
@@ -380,7 +381,7 @@ func local_request_FormService_ListForms_0(ctx context.Context, marshaler runtim
 }
 
 func request_FormService_GetForm_0(ctx context.Context, marshaler runtime.Marshaler, client FormServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetFormRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -390,14 +391,14 @@ func request_FormService_GetForm_0(ctx context.Context, marshaler runtime.Marsha
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.GetForm(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -406,7 +407,7 @@ func request_FormService_GetForm_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_FormService_GetForm_0(ctx context.Context, marshaler runtime.Marshaler, server FormServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetFormRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -416,14 +417,14 @@ func local_request_FormService_GetForm_0(ctx context.Context, marshaler runtime.
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.GetForm(ctx, &protoReq)
@@ -446,14 +447,14 @@ func request_FormService_UpdateForm_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.UpdateForm(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -476,14 +477,14 @@ func local_request_FormService_UpdateForm_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.UpdateForm(ctx, &protoReq)
@@ -492,7 +493,7 @@ func local_request_FormService_UpdateForm_0(ctx context.Context, marshaler runti
 }
 
 func request_FormService_DeleteForm_0(ctx context.Context, marshaler runtime.Marshaler, client FormServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteFormRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -502,14 +503,14 @@ func request_FormService_DeleteForm_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := client.DeleteForm(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -518,7 +519,7 @@ func request_FormService_DeleteForm_0(ctx context.Context, marshaler runtime.Mar
 }
 
 func local_request_FormService_DeleteForm_0(ctx context.Context, marshaler runtime.Marshaler, server FormServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeleteFormRequest
+	var protoReq common.ID
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -528,14 +529,14 @@ func local_request_FormService_DeleteForm_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["form_id"]
+	val, ok = pathParams["id"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "form_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.FormId, err = runtime.String(val)
+	protoReq.Id, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "form_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
 	msg, err := server.DeleteForm(ctx, &protoReq)
@@ -607,7 +608,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/GetFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/GetFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -632,7 +633,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/UpdateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/UpdateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -657,7 +658,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DeleteFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DeleteFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -682,7 +683,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DuplicateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}/duplicate"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DuplicateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}/duplicate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -757,7 +758,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/GetForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/GetForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -782,7 +783,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/UpdateForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/UpdateForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -807,7 +808,7 @@ func RegisterFormServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DeleteForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/form.service.FormService/DeleteForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -915,7 +916,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/GetFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/GetFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -937,7 +938,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/UpdateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/UpdateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -959,7 +960,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DeleteFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DeleteFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -981,7 +982,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DuplicateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{template_id}/duplicate"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DuplicateFormTemplate", runtime.WithHTTPPathPattern("/form_templates/{id}/duplicate"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1047,7 +1048,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/GetForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/GetForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1069,7 +1070,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/UpdateForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/UpdateForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1091,7 +1092,7 @@ func RegisterFormServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DeleteForm", runtime.WithHTTPPathPattern("/forms/{form_id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/form.service.FormService/DeleteForm", runtime.WithHTTPPathPattern("/forms/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1115,23 +1116,23 @@ var (
 
 	pattern_FormService_ListFormTemplates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"form_templates"}, ""))
 
-	pattern_FormService_GetFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "template_id"}, ""))
+	pattern_FormService_GetFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "id"}, ""))
 
-	pattern_FormService_UpdateFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "template_id"}, ""))
+	pattern_FormService_UpdateFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "id"}, ""))
 
-	pattern_FormService_DeleteFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "template_id"}, ""))
+	pattern_FormService_DeleteFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"form_templates", "id"}, ""))
 
-	pattern_FormService_DuplicateFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"form_templates", "template_id", "duplicate"}, ""))
+	pattern_FormService_DuplicateFormTemplate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"form_templates", "id", "duplicate"}, ""))
 
 	pattern_FormService_CreateForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"forms"}, ""))
 
 	pattern_FormService_ListForms_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"forms"}, ""))
 
-	pattern_FormService_GetForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "form_id"}, ""))
+	pattern_FormService_GetForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "id"}, ""))
 
-	pattern_FormService_UpdateForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "form_id"}, ""))
+	pattern_FormService_UpdateForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "id"}, ""))
 
-	pattern_FormService_DeleteForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "form_id"}, ""))
+	pattern_FormService_DeleteForm_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"forms", "id"}, ""))
 )
 
 var (

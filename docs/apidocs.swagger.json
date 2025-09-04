@@ -18,6 +18,7 @@
   "paths": {
     "/form_templates": {
       "get": {
+        "summary": "Lists form templates with pagination",
         "operationId": "FormService_ListFormTemplates",
         "responses": {
           "200": {
@@ -54,7 +55,7 @@
         ]
       },
       "post": {
-        "summary": "Form Template Operations",
+        "summary": "Creates a new form template",
         "operationId": "FormService_CreateFormTemplate",
         "responses": {
           "200": {
@@ -85,14 +86,15 @@
         ]
       }
     },
-    "/form_templates/{template_id}": {
+    "/form_templates/{id}": {
       "get": {
+        "summary": "Gets a single form template by ID",
         "operationId": "FormService_GetFormTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceGetFormTemplateResponse"
+              "$ref": "#/definitions/serviceFormTemplate"
             }
           },
           "default": {
@@ -104,7 +106,7 @@
         },
         "parameters": [
           {
-            "name": "template_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -115,12 +117,14 @@
         ]
       },
       "delete": {
+        "summary": "Deletes a form template by ID",
         "operationId": "FormService_DeleteFormTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceDeleteFormTemplateResponse"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -132,7 +136,7 @@
         },
         "parameters": [
           {
-            "name": "template_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -143,12 +147,13 @@
         ]
       },
       "put": {
+        "summary": "Updates an existing form template",
         "operationId": "FormService_UpdateFormTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceUpdateFormTemplateResponse"
+              "$ref": "#/definitions/serviceFormTemplate"
             }
           },
           "default": {
@@ -160,7 +165,7 @@
         },
         "parameters": [
           {
-            "name": "template_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -179,8 +184,9 @@
         ]
       }
     },
-    "/form_templates/{template_id}/duplicate": {
+    "/form_templates/{id}/duplicate": {
       "post": {
+        "summary": "Duplicates an existing form template",
         "operationId": "FormService_DuplicateFormTemplate",
         "responses": {
           "200": {
@@ -198,7 +204,7 @@
         },
         "parameters": [
           {
-            "name": "template_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -219,6 +225,7 @@
     },
     "/forms": {
       "get": {
+        "summary": "Lists forms with pagination",
         "operationId": "FormService_ListForms",
         "responses": {
           "200": {
@@ -269,7 +276,7 @@
         ]
       },
       "post": {
-        "summary": "Form Operations",
+        "summary": "Creates a new form, either from a template or standalone",
         "operationId": "FormService_CreateForm",
         "responses": {
           "200": {
@@ -300,14 +307,15 @@
         ]
       }
     },
-    "/forms/{form_id}": {
+    "/forms/{id}": {
       "get": {
+        "summary": "Gets a single form by ID",
         "operationId": "FormService_GetForm",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceGetFormResponse"
+              "$ref": "#/definitions/serviceForm"
             }
           },
           "default": {
@@ -319,7 +327,7 @@
         },
         "parameters": [
           {
-            "name": "form_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -330,12 +338,14 @@
         ]
       },
       "delete": {
+        "summary": "Deletes a form by ID",
         "operationId": "FormService_DeleteForm",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceDeleteFormResponse"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -347,7 +357,7 @@
         },
         "parameters": [
           {
-            "name": "form_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -358,12 +368,13 @@
         ]
       },
       "put": {
+        "summary": "Updates an existing form",
         "operationId": "FormService_UpdateForm",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/serviceUpdateFormResponse"
+              "$ref": "#/definitions/serviceForm"
             }
           },
           "default": {
@@ -375,7 +386,7 @@
         },
         "parameters": [
           {
-            "name": "form_id",
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -424,7 +435,7 @@
         "schema": {
           "type": "object"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object"
         }
       }
@@ -441,40 +452,10 @@
         "schema": {
           "type": "object"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object"
         }
       }
-    },
-    "commonBaseResponse": {
-      "type": "object",
-      "properties": {
-        "success": {
-          "type": "boolean"
-        },
-        "error": {
-          "$ref": "#/definitions/commonErrorResponse"
-        }
-      },
-      "title": "Base response wrapper"
-    },
-    "commonErrorResponse": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string"
-        },
-        "message": {
-          "type": "string"
-        },
-        "details": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      },
-      "title": "Standard error response"
     },
     "commonPagination": {
       "type": "object",
@@ -554,7 +535,7 @@
         "schema": {
           "type": "object"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object"
         }
       }
@@ -562,9 +543,6 @@
     "serviceCreateFormResponse": {
       "type": "object",
       "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
         "form": {
           "$ref": "#/definitions/serviceForm"
         }
@@ -582,7 +560,7 @@
         "schema": {
           "type": "object"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object"
         }
       }
@@ -590,36 +568,14 @@
     "serviceCreateFormTemplateResponse": {
       "type": "object",
       "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
         "template": {
           "$ref": "#/definitions/serviceFormTemplate"
-        }
-      }
-    },
-    "serviceDeleteFormResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        }
-      }
-    },
-    "serviceDeleteFormTemplateResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
         }
       }
     },
     "serviceDuplicateFormTemplateResponse": {
       "type": "object",
       "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
         "template": {
           "$ref": "#/definitions/serviceFormTemplate"
         }
@@ -652,7 +608,7 @@
           "type": "object",
           "title": "JSON Schema defining data structure and validation rules"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object",
           "title": "UI Schema defining form layout and appearance"
         },
@@ -692,7 +648,7 @@
           "type": "object",
           "title": "JSON Schema defining data structure and validation rules"
         },
-        "ui_schema": {
+        "uischema": {
           "type": "object",
           "title": "UI Schema defining form layout and appearance"
         },
@@ -713,34 +669,9 @@
       },
       "title": "Form Template Messages"
     },
-    "serviceGetFormResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
-        "form": {
-          "$ref": "#/definitions/serviceForm"
-        }
-      }
-    },
-    "serviceGetFormTemplateResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
-        "template": {
-          "$ref": "#/definitions/serviceFormTemplate"
-        }
-      }
-    },
     "serviceListFormTemplatesResponse": {
       "type": "object",
       "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
         "templates": {
           "type": "array",
           "items": {
@@ -756,9 +687,6 @@
     "serviceListFormsResponse": {
       "type": "object",
       "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
         "forms": {
           "type": "array",
           "items": {
@@ -768,28 +696,6 @@
         },
         "pagination": {
           "$ref": "#/definitions/commonPagination"
-        }
-      }
-    },
-    "serviceUpdateFormResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
-        "form": {
-          "$ref": "#/definitions/serviceForm"
-        }
-      }
-    },
-    "serviceUpdateFormTemplateResponse": {
-      "type": "object",
-      "properties": {
-        "base": {
-          "$ref": "#/definitions/commonBaseResponse"
-        },
-        "template": {
-          "$ref": "#/definitions/serviceFormTemplate"
         }
       }
     }

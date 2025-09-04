@@ -10,10 +10,11 @@ import (
 
 var (
 	// Common errors
-	ErrUnauthorized  = errors.New("unauthorized access")
-	ErrNotFound      = errors.New("resource not found")
-	ErrInvalidInput  = errors.New("invalid input")
-	ErrInternalError = errors.New("internal server error")
+	ErrUnauthorized    = errors.New("unauthorized access")
+	ErrNotFound        = errors.New("resource not found")
+	ErrInvalidInput    = errors.New("invalid input")
+	ErrInternalError   = errors.New("internal server error")
+	ErrInvalidObjectID = errors.New("invalid object id")
 
 	// Template-specific errors
 	ErrTemplateNotFound      = errors.New("form template not found")
@@ -37,7 +38,7 @@ func ToGRPCError(err error) error {
 		return status.Error(codes.Unauthenticated, err.Error())
 	case ErrNotFound, ErrTemplateNotFound, ErrFormNotFound:
 		return status.Error(codes.NotFound, err.Error())
-	case ErrInvalidInput, ErrFormInvalidTemplate, ErrFormInvalidEvent:
+	case ErrInvalidInput, ErrFormInvalidTemplate, ErrFormInvalidEvent, ErrInvalidObjectID:
 		return status.Error(codes.InvalidArgument, err.Error())
 	case ErrTemplateLimitExceeded:
 		return status.Error(codes.ResourceExhausted, err.Error())

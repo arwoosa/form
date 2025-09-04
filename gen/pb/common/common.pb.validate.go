@@ -142,48 +142,42 @@ var _ interface {
 	ErrorName() string
 } = PaginationValidationError{}
 
-// Validate checks the field values on ErrorResponse with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *ErrorResponse) Validate() error {
+// Validate checks the field values on ID with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *ID) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ErrorResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in ErrorResponseMultiError, or
-// nil if none found.
-func (m *ErrorResponse) ValidateAll() error {
+// ValidateAll checks the field values on ID with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in IDMultiError, or nil if none found.
+func (m *ID) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ErrorResponse) validate(all bool) error {
+func (m *ID) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Code
-
-	// no validation rules for Message
-
-	// no validation rules for Details
+	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return ErrorResponseMultiError(errors)
+		return IDMultiError(errors)
 	}
 
 	return nil
 }
 
-// ErrorResponseMultiError is an error wrapping multiple validation errors
-// returned by ErrorResponse.ValidateAll() if the designated constraints
-// aren't met.
-type ErrorResponseMultiError []error
+// IDMultiError is an error wrapping multiple validation errors returned by
+// ID.ValidateAll() if the designated constraints aren't met.
+type IDMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ErrorResponseMultiError) Error() string {
+func (m IDMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -192,11 +186,11 @@ func (m ErrorResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ErrorResponseMultiError) AllErrors() []error { return m }
+func (m IDMultiError) AllErrors() []error { return m }
 
-// ErrorResponseValidationError is the validation error returned by
-// ErrorResponse.Validate if the designated constraints aren't met.
-type ErrorResponseValidationError struct {
+// IDValidationError is the validation error returned by ID.Validate if the
+// designated constraints aren't met.
+type IDValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -204,22 +198,22 @@ type ErrorResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ErrorResponseValidationError) Field() string { return e.field }
+func (e IDValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ErrorResponseValidationError) Reason() string { return e.reason }
+func (e IDValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ErrorResponseValidationError) Cause() error { return e.cause }
+func (e IDValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ErrorResponseValidationError) Key() bool { return e.key }
+func (e IDValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ErrorResponseValidationError) ErrorName() string { return "ErrorResponseValidationError" }
+func (e IDValidationError) ErrorName() string { return "IDValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ErrorResponseValidationError) Error() string {
+func (e IDValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -231,14 +225,14 @@ func (e ErrorResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sErrorResponse.%s: %s%s",
+		"invalid %sID.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ErrorResponseValidationError{}
+var _ error = IDValidationError{}
 
 var _ interface {
 	Field() string
@@ -246,134 +240,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ErrorResponseValidationError{}
-
-// Validate checks the field values on BaseResponse with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BaseResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BaseResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BaseResponseMultiError, or
-// nil if none found.
-func (m *BaseResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BaseResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Success
-
-	if all {
-		switch v := interface{}(m.GetError()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BaseResponseValidationError{
-					field:  "Error",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, BaseResponseValidationError{
-					field:  "Error",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetError()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return BaseResponseValidationError{
-				field:  "Error",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return BaseResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// BaseResponseMultiError is an error wrapping multiple validation errors
-// returned by BaseResponse.ValidateAll() if the designated constraints aren't met.
-type BaseResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BaseResponseMultiError) Error() string {
-	msgs := make([]string, 0, len(m))
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BaseResponseMultiError) AllErrors() []error { return m }
-
-// BaseResponseValidationError is the validation error returned by
-// BaseResponse.Validate if the designated constraints aren't met.
-type BaseResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BaseResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BaseResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BaseResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BaseResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BaseResponseValidationError) ErrorName() string { return "BaseResponseValidationError" }
-
-// Error satisfies the builtin error interface
-func (e BaseResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBaseResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BaseResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BaseResponseValidationError{}
+} = IDValidationError{}

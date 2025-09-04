@@ -85,7 +85,13 @@ func (r *MongoRepository) FindWithPagination(ctx context.Context, collection str
 // UpdateOne updates a single document
 func (r *MongoRepository) UpdateOne(ctx context.Context, collection string, filter map[string]interface{}, update interface{}) error {
 	coll := r.GetCollection(collection)
-	_, err := coll.UpdateOne(ctx, filter, update)
+	
+	// Wrap the update in $set operator for MongoDB
+	updateDoc := map[string]interface{}{
+		"$set": update,
+	}
+	
+	_, err := coll.UpdateOne(ctx, filter, updateDoc)
 	return err
 }
 
