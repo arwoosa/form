@@ -20,72 +20,82 @@ type Migration struct {
 // collection相關的index
 var migrations = []Migration{
 	{
-		Collection: "events",
+		Collection: "form_templates",
 		Indexes: []mongo.IndexModel{
-			// Basic query index for console API
-			{
-				Keys: bson.D{
-					{Key: "merchant_id", Value: 1},
-					{Key: "status", Value: 1},
-					{Key: "visibility", Value: 1},
-				},
-			},
-			// Time range query index for sessions
-			{
-				Keys: bson.D{
-					{Key: "merchant_id", Value: 1},
-					{Key: "sessions.start_time", Value: 1},
-				},
-			},
-			// Geospatial index for location-based queries
-			{
-				Keys: bson.D{{Key: "location.coordinates", Value: "2dsphere"}},
-			},
-			// Text search index for title
-			{
-				Keys: bson.D{{Key: "title", Value: "text"}},
-			},
-			// Sorting index for console list view
+			// Basic query index for merchant isolation and sorting
 			{
 				Keys: bson.D{
 					{Key: "merchant_id", Value: 1},
 					{Key: "created_at", Value: -1},
 				},
 			},
-			// Sorting index for updated time
+			// Merchant isolation with name search
+			{
+				Keys: bson.D{
+					{Key: "merchant_id", Value: 1},
+					{Key: "name", Value: 1},
+				},
+			},
+			// Sorting by updated time for listing
 			{
 				Keys: bson.D{
 					{Key: "merchant_id", Value: 1},
 					{Key: "updated_at", Value: -1},
 				},
 			},
-			// Public API query index
+			// Text search index for template names
 			{
-				Keys: bson.D{
-					{Key: "status", Value: 1},
-					{Key: "visibility", Value: 1},
-					{Key: "sessions.start_time", Value: 1},
-				},
+				Keys: bson.D{{Key: "name", Value: "text"}},
 			},
-			// Performance index for session time sorting
+			// Index for counting templates per merchant (business rules)
 			{
-				Keys: bson.D{
-					{Key: "sessions.start_time", Value: 1},
-				},
+				Keys: bson.D{{Key: "merchant_id", Value: 1}},
 			},
 		},
 	},
 	{
-		Collection: "sessions",
+		Collection: "forms",
 		Indexes: []mongo.IndexModel{
-			// 1. 事件查詢
-			{Keys: bson.D{{Key: "event_id", Value: 1}}},
-			// 2. Merchant 隔離 + 時間排序
-			{Keys: bson.D{{Key: "merchant_id", Value: 1}, {Key: "start_time", Value: 1}}},
-			// 3. 事件內 session 排序
-			{Keys: bson.D{{Key: "event_id", Value: 1}, {Key: "start_time", Value: 1}}},
-			// 4. 時間範圍查詢
-			{Keys: bson.D{{Key: "start_time", Value: 1}, {Key: "end_time", Value: 1}}},
+			// Basic query index for merchant isolation and sorting
+			{
+				Keys: bson.D{
+					{Key: "merchant_id", Value: 1},
+					{Key: "created_at", Value: -1},
+				},
+			},
+			// Event-based form queries
+			{
+				Keys: bson.D{
+					{Key: "merchant_id", Value: 1},
+					{Key: "event_id", Value: 1},
+				},
+			},
+			// Template-based form queries
+			{
+				Keys: bson.D{
+					{Key: "merchant_id", Value: 1},
+					{Key: "template_id", Value: 1},
+				},
+			},
+			// Forms by event for specific event queries
+			{
+				Keys: bson.D{{Key: "event_id", Value: 1}},
+			},
+			// Forms by template for template usage tracking
+			{
+				Keys: bson.D{{Key: "template_id", Value: 1}},
+			},
+			// Sorting by updated time
+			{
+				Keys: bson.D{
+					{Key: "merchant_id", Value: 1},
+					{Key: "updated_at", Value: -1},
+				},
+			},
+			// Text search index for form names
+			{
+				Keys: bson.D{{Key: "name", Value: "text"}},
+			},
 		},
 	},
 }
