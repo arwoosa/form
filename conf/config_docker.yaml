@@ -5,10 +5,15 @@ version: 1.0.0
 time_zone: "Asia/Taipei"
 log:
   level: "debug"
+  
 mongodb:
   host: "host.docker.internal"
   port: 27017
-  db: "partivo_forms"
+  db: "partivo"
+
+keto:
+  write_addr: "192.168.1.123:4467"
+  read_addr: "192.168.1.123:4466"
 
 # external:
 #   order_service:
@@ -20,7 +25,7 @@ pagination:
   max_page_size: 100
 
 business_rules:
-  max_templates_per_merchant: 10
+  max_templates_per_merchant: 3
 
 
 
