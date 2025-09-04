@@ -12,20 +12,23 @@ WORKDIR /build
 COPY . .
 RUN go mod download
 
-RUN go build -o partivo_form_service ./cmd/form-server/
+RUN go build -o partivo_form ./cmd/form-server/
 
 ###################
 # multi-stage build
 ###################
 FROM scratch
 
+# Copy timezone data from builder
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /usr/local/go/lib/time/zoneinfo.zip
+
 WORKDIR /app
 COPY ./conf /app/conf
 
-COPY --from=builder /build/partivo_form_service /app/
+COPY --from=builder /build/partivo_form /app/
 
 # Expose both HTTP and gRPC ports
-EXPOSE 8081 8082
+EXPOSE 8081
 
-ENTRYPOINT ["/app/partivo_form_service"]
+ENTRYPOINT ["/app/partivo_form"]
 CMD ["server", "--config", "conf/config_docker.yaml"]
