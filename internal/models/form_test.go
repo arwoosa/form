@@ -61,44 +61,6 @@ func TestForm_IsValid(t *testing.T) {
 	}
 }
 
-func TestForm_HasTemplate(t *testing.T) {
-	templateID := primitive.NewObjectID()
-
-	tests := []struct {
-		name     string
-		form     Form
-		expected bool
-	}{
-		{
-			name: "has template",
-			form: Form{
-				TemplateID: &templateID,
-			},
-			expected: true,
-		},
-		{
-			name: "no template",
-			form: Form{
-				TemplateID: nil,
-			},
-			expected: false,
-		},
-		{
-			name: "zero template id",
-			form: Form{
-				TemplateID: &primitive.NilObjectID,
-			},
-			expected: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.expected, tt.form.HasTemplate())
-		})
-	}
-}
-
 func TestForm_HasEventID(t *testing.T) {
 	eventID := primitive.NewObjectID()
 
@@ -166,19 +128,16 @@ func TestCreateFormInput_Validation(t *testing.T) {
 
 func TestFormQueryOptions_Validation(t *testing.T) {
 	eventID := primitive.NewObjectID()
-	templateID := primitive.NewObjectID()
 
 	options := FormQueryOptions{
 		MerchantID: "merchant123",
 		EventID:    &eventID,
-		TemplateID: &templateID,
 		Page:       1,
 		PageSize:   20,
 	}
 
 	assert.Equal(t, "merchant123", options.MerchantID)
 	assert.Equal(t, eventID, *options.EventID)
-	assert.Equal(t, templateID, *options.TemplateID)
 	assert.Equal(t, 1, options.Page)
 	assert.Equal(t, 20, options.PageSize)
 }

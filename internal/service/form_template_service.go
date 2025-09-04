@@ -67,8 +67,8 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 }
 
 // GetTemplate retrieves a form template by ID
-func (s *FormTemplateService) GetTemplate(ctx context.Context, templateID primitive.ObjectID, merchantID string) (*models.FormTemplate, error) {
-	template, err := s.templateRepo.FindByID(ctx, templateID, merchantID)
+func (s *FormTemplateService) GetTemplate(ctx context.Context, templateID primitive.ObjectID) (*models.FormTemplate, error) {
+	template, err := s.templateRepo.FindByID(ctx, templateID)
 	if err != nil {
 		log.Error("Failed to get template", log.Err(err), log.String("template_id", templateID.Hex()))
 		return nil, ErrTemplateNotFound
@@ -108,7 +108,7 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 	}
 
 	// Get existing template to validate ownership
-	existing, err := s.templateRepo.FindByID(ctx, input.ID, input.MerchantID)
+	existing, err := s.templateRepo.FindByID(ctx, input.ID)
 	if err != nil {
 		log.Error("Template not found for update", log.Err(err), log.String("template_id", input.ID.Hex()))
 		return nil, ErrTemplateNotFound
@@ -135,9 +135,9 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 }
 
 // DeleteTemplate deletes a form template
-func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID primitive.ObjectID, merchantID string) error {
+func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID primitive.ObjectID) error {
 	// Check if template exists
-	exists, err := s.templateRepo.Exists(ctx, templateID, merchantID)
+	exists, err := s.templateRepo.Exists(ctx, templateID)
 	if err != nil {
 		log.Error("Failed to check template existence", log.Err(err))
 		return ErrInternalError
@@ -147,14 +147,13 @@ func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID pri
 	}
 
 	// Delete template
-	if err := s.templateRepo.Delete(ctx, templateID, merchantID); err != nil {
+	if err := s.templateRepo.Delete(ctx, templateID); err != nil {
 		log.Error("Failed to delete template", log.Err(err))
 		return ErrInternalError
 	}
 
 	log.Info("Template deleted successfully",
-		log.String("template_id", templateID.Hex()),
-		log.String("merchant_id", merchantID))
+		log.String("template_id", templateID.Hex()))
 
 	return nil
 }

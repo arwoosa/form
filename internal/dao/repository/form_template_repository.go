@@ -14,8 +14,8 @@ type FormTemplateRepository interface {
 	// Create a new form template
 	Create(ctx context.Context, template *models.FormTemplate) error
 
-	// Find form template by ID and merchant ID
-	FindByID(ctx context.Context, templateID primitive.ObjectID, merchantID string) (*models.FormTemplate, error)
+	// Find form template by ID
+	FindByID(ctx context.Context, templateID primitive.ObjectID) (*models.FormTemplate, error)
 
 	// Find form templates with pagination by merchant ID
 	FindByMerchantID(ctx context.Context, options *models.FormTemplateQueryOptions) ([]*models.FormTemplate, int64, error)
@@ -23,14 +23,14 @@ type FormTemplateRepository interface {
 	// Update form template
 	Update(ctx context.Context, template *models.FormTemplate) error
 
-	// Delete form template by ID and merchant ID
-	Delete(ctx context.Context, templateID primitive.ObjectID, merchantID string) error
+	// Delete form template by ID
+	Delete(ctx context.Context, templateID primitive.ObjectID) error
 
 	// Count templates by merchant ID (for business rule validation)
 	CountByMerchantID(ctx context.Context, merchantID string) (int64, error)
 
-	// Check if template exists by ID and merchant ID
-	Exists(ctx context.Context, templateID primitive.ObjectID, merchantID string) (bool, error)
+	// Check if template exists by ID
+	Exists(ctx context.Context, templateID primitive.ObjectID) (bool, error)
 
 	// Duplicate a template with new name
 	Duplicate(ctx context.Context, sourceID primitive.ObjectID, newName, createdBy, merchantID string) (*models.FormTemplate, error)
@@ -61,10 +61,9 @@ func (r *mongoFormTemplateRepository) Create(ctx context.Context, template *mode
 }
 
 // FindByID implements FormTemplateRepository.FindByID
-func (r *mongoFormTemplateRepository) FindByID(ctx context.Context, templateID primitive.ObjectID, merchantID string) (*models.FormTemplate, error) {
+func (r *mongoFormTemplateRepository) FindByID(ctx context.Context, templateID primitive.ObjectID) (*models.FormTemplate, error) {
 	filter := map[string]interface{}{
-		"_id":         templateID,
-		"merchant_id": merchantID,
+		"_id": templateID,
 	}
 
 	var template models.FormTemplate
@@ -109,10 +108,9 @@ func (r *mongoFormTemplateRepository) Update(ctx context.Context, template *mode
 }
 
 // Delete implements FormTemplateRepository.Delete
-func (r *mongoFormTemplateRepository) Delete(ctx context.Context, templateID primitive.ObjectID, merchantID string) error {
+func (r *mongoFormTemplateRepository) Delete(ctx context.Context, templateID primitive.ObjectID) error {
 	filter := map[string]interface{}{
-		"_id":         templateID,
-		"merchant_id": merchantID,
+		"_id": templateID,
 	}
 
 	return r.mongoRepo.DeleteOne(ctx, models.FormTemplate{}.TableName(), filter)
@@ -128,10 +126,9 @@ func (r *mongoFormTemplateRepository) CountByMerchantID(ctx context.Context, mer
 }
 
 // Exists implements FormTemplateRepository.Exists
-func (r *mongoFormTemplateRepository) Exists(ctx context.Context, templateID primitive.ObjectID, merchantID string) (bool, error) {
+func (r *mongoFormTemplateRepository) Exists(ctx context.Context, templateID primitive.ObjectID) (bool, error) {
 	count, err := r.mongoRepo.Count(ctx, models.FormTemplate{}.TableName(), map[string]interface{}{
-		"_id":         templateID,
-		"merchant_id": merchantID,
+		"_id": templateID,
 	})
 	if err != nil {
 		return false, err
@@ -143,7 +140,7 @@ func (r *mongoFormTemplateRepository) Exists(ctx context.Context, templateID pri
 // Duplicate implements FormTemplateRepository.Duplicate
 func (r *mongoFormTemplateRepository) Duplicate(ctx context.Context, sourceID primitive.ObjectID, newName, createdBy, merchantID string) (*models.FormTemplate, error) {
 	// First, find the source template
-	source, err := r.FindByID(ctx, sourceID, merchantID)
+	source, err := r.FindByID(ctx, sourceID)
 	if err != nil {
 		return nil, err
 	}

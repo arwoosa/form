@@ -42,7 +42,6 @@ func AssertFormEqual(t *testing.T, expected, actual *models.Form, ignoreTimestam
 
 	assert.Equal(t, expected.Name, actual.Name, "Name mismatch")
 	assert.Equal(t, expected.MerchantID, actual.MerchantID, "MerchantID mismatch")
-	assert.Equal(t, expected.TemplateID, actual.TemplateID, "TemplateID mismatch")
 	assert.Equal(t, expected.EventID, actual.EventID, "EventID mismatch")
 	assert.Equal(t, expected.Description, actual.Description, "Description mismatch")
 	assert.Equal(t, expected.Schema, actual.Schema, "Schema mismatch")

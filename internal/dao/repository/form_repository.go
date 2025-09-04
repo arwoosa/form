@@ -14,8 +14,8 @@ type FormRepository interface {
 	// Create a new form
 	Create(ctx context.Context, form *models.Form) error
 
-	// Find form by ID and merchant ID
-	FindByID(ctx context.Context, formID primitive.ObjectID, merchantID string) (*models.Form, error)
+	// Find form by ID
+	FindByID(ctx context.Context, formID primitive.ObjectID) (*models.Form, error)
 
 	// Find forms with pagination and optional filters
 	Find(ctx context.Context, options *models.FormQueryOptions) ([]*models.Form, int64, error)
@@ -23,11 +23,11 @@ type FormRepository interface {
 	// Update form
 	Update(ctx context.Context, form *models.Form) error
 
-	// Delete form by ID and merchant ID
-	Delete(ctx context.Context, formID primitive.ObjectID, merchantID string) error
+	// Delete form by ID
+	Delete(ctx context.Context, formID primitive.ObjectID) error
 
-	// Check if form exists by ID and merchant ID
-	Exists(ctx context.Context, formID primitive.ObjectID, merchantID string) (bool, error)
+	// Check if form exists by ID
+	Exists(ctx context.Context, formID primitive.ObjectID) (bool, error)
 
 	// Find forms by event ID
 	FindByEventID(ctx context.Context, eventID primitive.ObjectID, merchantID string, page, pageSize int) ([]*models.Form, int64, error)
@@ -64,10 +64,9 @@ func (r *mongoFormRepository) Create(ctx context.Context, form *models.Form) err
 }
 
 // FindByID implements FormRepository.FindByID
-func (r *mongoFormRepository) FindByID(ctx context.Context, formID primitive.ObjectID, merchantID string) (*models.Form, error) {
+func (r *mongoFormRepository) FindByID(ctx context.Context, formID primitive.ObjectID) (*models.Form, error) {
 	filter := map[string]interface{}{
-		"_id":         formID,
-		"merchant_id": merchantID,
+		"_id": formID,
 	}
 
 	var form models.Form
@@ -90,10 +89,6 @@ func (r *mongoFormRepository) Find(ctx context.Context, options *models.FormQuer
 		filter["event_id"] = options.EventID
 	}
 
-	if options.TemplateID != nil && !options.TemplateID.IsZero() {
-		filter["template_id"] = options.TemplateID
-	}
-
 	var forms []*models.Form
 	pagination := &PaginationOptions{
 		Page:     options.Page,
@@ -113,28 +108,25 @@ func (r *mongoFormRepository) Update(ctx context.Context, form *models.Form) err
 	form.SetUpdatedAt(time.Now())
 
 	filter := map[string]interface{}{
-		"_id":         form.ID,
-		"merchant_id": form.MerchantID,
+		"_id": form.ID,
 	}
 
 	return r.mongoRepo.UpdateOne(ctx, form.TableName(), filter, form)
 }
 
 // Delete implements FormRepository.Delete
-func (r *mongoFormRepository) Delete(ctx context.Context, formID primitive.ObjectID, merchantID string) error {
+func (r *mongoFormRepository) Delete(ctx context.Context, formID primitive.ObjectID) error {
 	filter := map[string]interface{}{
-		"_id":         formID,
-		"merchant_id": merchantID,
+		"_id": formID,
 	}
 
 	return r.mongoRepo.DeleteOne(ctx, models.Form{}.TableName(), filter)
 }
 
 // Exists implements FormRepository.Exists
-func (r *mongoFormRepository) Exists(ctx context.Context, formID primitive.ObjectID, merchantID string) (bool, error) {
+func (r *mongoFormRepository) Exists(ctx context.Context, formID primitive.ObjectID) (bool, error) {
 	count, err := r.mongoRepo.Count(ctx, models.Form{}.TableName(), map[string]interface{}{
-		"_id":         formID,
-		"merchant_id": merchantID,
+		"_id": formID,
 	})
 	if err != nil {
 		return false, err

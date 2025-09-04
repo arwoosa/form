@@ -117,17 +117,12 @@ func (s *GRPCFormServer) ListFormTemplates(ctx context.Context, req *pb.ListForm
 
 // GetFormTemplate gets a form template by ID
 func (s *GRPCFormServer) GetFormTemplate(ctx context.Context, req *common.ID) (*pb.FormTemplate, error) {
-	user, err := ezgrpc.GetUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	templateID, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
 		return nil, ErrInvalidObjectID
 	}
 
-	template, err := s.templateService.GetTemplate(ctx, templateID, user.Merchant)
+	template, err := s.templateService.GetTemplate(ctx, templateID)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +148,6 @@ func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateF
 		Name:        req.Name,
 		Description: req.Description,
 		UpdatedBy:   user.ID,
-		MerchantID:  user.Merchant,
 	}
 
 	// Convert schema if provided
@@ -176,17 +170,12 @@ func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateF
 
 // DeleteFormTemplate deletes a form template
 func (s *GRPCFormServer) DeleteFormTemplate(ctx context.Context, req *common.ID) (*emptypb.Empty, error) {
-	user, err := ezgrpc.GetUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	templateID, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
 		return nil, ErrInvalidObjectID
 	}
 
-	err = s.templateService.DeleteTemplate(ctx, templateID, user.Merchant)
+	err = s.templateService.DeleteTemplate(ctx, templateID)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +197,7 @@ func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.Dupl
 
 	input := &models.DuplicateFormTemplateInput{
 		SourceID:   sourceID,
-		Name:       req.Name,
+		Name:       req.Name + " copy",
 		CreatedBy:  user.ID,
 		MerchantID: user.Merchant,
 	}
@@ -241,15 +230,6 @@ func (s *GRPCFormServer) CreateForm(ctx context.Context, req *pb.CreateFormReque
 		Description: req.Description,
 		MerchantID:  user.Merchant,
 		CreatedBy:   user.ID,
-	}
-
-	// Convert optional template ID
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return nil, ErrInvalidObjectID
-		}
-		input.TemplateID = &templateID
 	}
 
 	// Convert optional event ID
@@ -310,14 +290,6 @@ func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest
 		options.EventID = &eventID
 	}
 
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return nil, ErrInvalidObjectID
-		}
-		options.TemplateID = &templateID
-	}
-
 	forms, totalCount, err := s.formService.ListForms(ctx, options)
 	if err != nil {
 		return nil, err
@@ -349,17 +321,12 @@ func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest
 
 // GetForm gets a form by ID
 func (s *GRPCFormServer) GetForm(ctx context.Context, req *common.ID) (*pb.Form, error) {
-	user, err := ezgrpc.GetUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	formID, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
 		return nil, ErrInvalidObjectID
 	}
 
-	form, err := s.formService.GetForm(ctx, formID, user.Merchant)
+	form, err := s.formService.GetForm(ctx, formID)
 	if err != nil {
 		return nil, err
 	}
@@ -385,25 +352,6 @@ func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormReque
 		Name:        req.Name,
 		Description: req.Description,
 		UpdatedBy:   user.ID,
-		MerchantID:  user.Merchant,
-	}
-
-	// Convert optional template ID
-	if req.TemplateId != "" {
-		templateID, err := primitive.ObjectIDFromHex(req.TemplateId)
-		if err != nil {
-			return nil, ErrInvalidObjectID
-		}
-		input.TemplateID = &templateID
-	}
-
-	// Convert optional event ID
-	if req.EventId != "" {
-		eventID, err := primitive.ObjectIDFromHex(req.EventId)
-		if err != nil {
-			return nil, ErrInvalidObjectID
-		}
-		input.EventID = &eventID
 	}
 
 	// Convert schema if provided
@@ -426,17 +374,12 @@ func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormReque
 
 // DeleteForm deletes a form
 func (s *GRPCFormServer) DeleteForm(ctx context.Context, req *common.ID) (*emptypb.Empty, error) {
-	user, err := ezgrpc.GetUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	formID, err := primitive.ObjectIDFromHex(req.Id)
 	if err != nil {
 		return nil, ErrInvalidObjectID
 	}
 
-	err = s.formService.DeleteForm(ctx, formID, user.Merchant)
+	err = s.formService.DeleteForm(ctx, formID)
 	if err != nil {
 		return nil, err
 	}
@@ -521,11 +464,6 @@ func (s *GRPCFormServer) convertFormToProto(form *models.Form) (*pb.Form, error)
 		CreatedBy:   form.CreatedBy,
 		UpdatedAt:   timestamppb.New(form.GetUpdatedAt()),
 		UpdatedBy:   form.UpdatedBy,
-	}
-
-	// Add optional fields
-	if form.TemplateID != nil {
-		pbForm.TemplateId = form.TemplateID.Hex()
 	}
 
 	if form.EventID != nil {

@@ -73,13 +73,6 @@ func MatchFormTemplateWithMerchant(merchantID string) interface{} {
 	})
 }
 
-// MatchFormWithTemplateID matches a Form with specific template ID
-func MatchFormWithTemplateID(templateID string) interface{} {
-	return mock.MatchedBy(func(f *models.Form) bool {
-		return f != nil && f.TemplateID != nil && f.TemplateID.Hex() == templateID
-	})
-}
-
 // MatchFormWithEventID matches a Form with specific event ID
 func MatchFormWithEventID(eventID string) interface{} {
 	return mock.MatchedBy(func(f *models.Form) bool {

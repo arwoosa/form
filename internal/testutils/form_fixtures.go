@@ -97,7 +97,6 @@ func TestForm() *models.Form {
 // TestFormWithTemplate creates a test form with a template ID
 func TestFormWithTemplate(templateID primitive.ObjectID) *models.Form {
 	form := TestForm()
-	form.TemplateID = &templateID
 	return form
 }
 

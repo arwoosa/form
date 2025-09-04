@@ -50,7 +50,7 @@ type FormServiceClient interface {
 	DeleteFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Duplicates an existing form template
 	DuplicateFormTemplate(ctx context.Context, in *DuplicateFormTemplateRequest, opts ...grpc.CallOption) (*DuplicateFormTemplateResponse, error)
-	// Creates a new form, either from a template or standalone
+	// Creates a new form
 	CreateForm(ctx context.Context, in *CreateFormRequest, opts ...grpc.CallOption) (*CreateFormResponse, error)
 	// Lists forms with pagination
 	ListForms(ctx context.Context, in *ListFormsRequest, opts ...grpc.CallOption) (*ListFormsResponse, error)
@@ -185,7 +185,7 @@ type FormServiceServer interface {
 	DeleteFormTemplate(context.Context, *common.ID) (*emptypb.Empty, error)
 	// Duplicates an existing form template
 	DuplicateFormTemplate(context.Context, *DuplicateFormTemplateRequest) (*DuplicateFormTemplateResponse, error)
-	// Creates a new form, either from a template or standalone
+	// Creates a new form
 	CreateForm(context.Context, *CreateFormRequest) (*CreateFormResponse, error)
 	// Lists forms with pagination
 	ListForms(context.Context, *ListFormsRequest) (*ListFormsResponse, error)

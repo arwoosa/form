@@ -262,13 +262,6 @@
             "in": "query",
             "required": false,
             "type": "string"
-          },
-          {
-            "name": "template_id",
-            "description": "Optional filter by template",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -276,7 +269,7 @@
         ]
       },
       "post": {
-        "summary": "Creates a new form, either from a template or standalone",
+        "summary": "Creates a new form",
         "operationId": "FormService_CreateForm",
         "responses": {
           "200": {
@@ -421,14 +414,6 @@
         "name": {
           "type": "string"
         },
-        "event_id": {
-          "type": "string",
-          "title": "Optional"
-        },
-        "template_id": {
-          "type": "string",
-          "title": "Optional"
-        },
         "description": {
           "type": "string"
         },
@@ -523,11 +508,7 @@
         },
         "event_id": {
           "type": "string",
-          "title": "Optional"
-        },
-        "template_id": {
-          "type": "string",
-          "title": "Optional"
+          "title": "required"
         },
         "description": {
           "type": "string"

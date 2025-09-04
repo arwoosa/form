@@ -58,7 +58,7 @@ service FormService {
         };
     }
     
-    // Creates a new form, either from a template or standalone
+    // Creates a new form
     rpc CreateForm(CreateFormRequest) returns (CreateFormResponse) {
         option (google.api.http) = {
             post: "/forms"
@@ -99,11 +99,11 @@ service FormService {
 // Form Template Messages
 message FormTemplate {
     string id = 1;
-    string name = 2 [(validate.rules).string.min_len = 1];
+    string name = 2;
     string merchant_id = 3;
     string description = 4;
     google.protobuf.Struct schema = 5;    // JSON Schema defining data structure and validation rules
-    google.protobuf.Struct uischema = 6; // UI Schema defining form layout and appearance
+    google.protobuf.Struct uischema = 6;  // UI Schema defining form layout and appearance
     google.protobuf.Timestamp created_at = 7;
     string created_by = 8;
     google.protobuf.Timestamp updated_at = 9;
@@ -152,13 +152,12 @@ message DuplicateFormTemplateResponse {
 // Form Messages
 message Form {
     string id = 1;
-    string name = 2 [(validate.rules).string.min_len = 1];
-    string event_id = 3;    // Optional reference to an event
+    string name = 2;
+    string event_id = 3;
     string merchant_id = 4;
-    string template_id = 5; // Optional reference to a form template
     string description = 6;
     google.protobuf.Struct schema = 7;    // JSON Schema defining data structure and validation rules
-    google.protobuf.Struct uischema = 8; // UI Schema defining form layout and appearance
+    google.protobuf.Struct uischema = 8;  // UI Schema defining form layout and appearance
     google.protobuf.Timestamp created_at = 9;
     string created_by = 10;
     google.protobuf.Timestamp updated_at = 11;
@@ -167,8 +166,7 @@ message Form {
 
 message CreateFormRequest {
     string name = 1 [(validate.rules).string.min_len = 1];
-    string event_id = 2;    // Optional
-    string template_id = 3; // Optional
+    string event_id = 2 [(validate.rules).string.min_len = 1]; // required
     string description = 4;
     google.protobuf.Struct schema = 5;
     google.protobuf.Struct uischema = 6;
@@ -182,7 +180,6 @@ message ListFormsRequest {
     int32 page = 1 [(validate.rules).int32.gte = 1];
     int32 page_size = 2 [(validate.rules).int32 = {gte: 1, lte: 100}];
     string event_id = 3;    // Optional filter by event
-    string template_id = 4; // Optional filter by template
 }
 
 message ListFormsResponse {
@@ -194,8 +191,6 @@ message ListFormsResponse {
 message UpdateFormRequest {
     string id = 1 [(validate.rules).string.min_len = 1];
     string name = 2 [(validate.rules).string.min_len = 1];
-    string event_id = 3;    // Optional
-    string template_id = 4; // Optional
     string description = 5;
     google.protobuf.Struct schema = 6;
     google.protobuf.Struct uischema = 7;

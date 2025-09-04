@@ -1577,9 +1577,16 @@ func (m *CreateFormRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for EventId
-
-	// no validation rules for TemplateId
+	if utf8.RuneCountInString(m.GetEventId()) < 1 {
+		err := CreateFormRequestValidationError{
+			field:  "EventId",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Description
 
@@ -1898,8 +1905,6 @@ func (m *ListFormsRequest) validate(all bool) error {
 
 	// no validation rules for EventId
 
-	// no validation rules for TemplateId
-
 	if len(errors) > 0 {
 		return ListFormsRequestMultiError(errors)
 	}
@@ -2186,10 +2191,6 @@ func (m *UpdateFormRequest) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	// no validation rules for EventId
-
-	// no validation rules for TemplateId
 
 	// no validation rules for Description
 
