@@ -6,9 +6,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/arwoosa/form-service/conf"
-	"github.com/arwoosa/form-service/internal/dao/repository"
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/conf"
+	"github.com/arwoosa/form/internal/dao/repository"
+	"github.com/arwoosa/form/internal/models"
 	"github.com/arwoosa/vulpes/log"
 	"github.com/arwoosa/vulpes/validate"
 )

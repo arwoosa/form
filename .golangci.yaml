@@ -64,7 +64,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/arwoosa/form-service
+        - github.com/arwoosa/form
   exclusions:
     generated: lax
     paths:

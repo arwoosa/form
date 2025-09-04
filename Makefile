@@ -2,7 +2,7 @@
 
 BINARY="form-server"
 OLD_MODULE="grpc_gateway_framework"
-PROTO_MODULE = github.com/arwoosa/form-service
+PROTO_MODULE = github.com/arwoosa/form
 
 all: gotool build
 

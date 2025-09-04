@@ -1,4 +1,4 @@
-module github.com/arwoosa/form-service
+module github.com/arwoosa/form
 
 go 1.24.0
 

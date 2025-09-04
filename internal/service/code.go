@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/arwoosa/form-service/internal/constants"
+	"github.com/arwoosa/form/internal/constants"
 )
 
 type ResCode int64

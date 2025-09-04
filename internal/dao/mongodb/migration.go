@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/arwoosa/form-service/conf"
+	"github.com/arwoosa/form/conf"
 
 	"github.com/arwoosa/vulpes/log"
 	"go.mongodb.org/mongo-driver/bson"

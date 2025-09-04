@@ -8,7 +8,7 @@ package form
 
 import (
 	context "context"
-	common "github.com/arwoosa/form-service/gen/pb/common"
+	common "github.com/arwoosa/form/gen/pb/common"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

@@ -3,10 +3,10 @@ package service
 import (
 	"google.golang.org/grpc"
 
-	"github.com/arwoosa/form-service/conf"
-	pb "github.com/arwoosa/form-service/gen/pb/form"
-	"github.com/arwoosa/form-service/internal/dao/mongodb"
-	"github.com/arwoosa/form-service/internal/dao/repository"
+	"github.com/arwoosa/form/conf"
+	pb "github.com/arwoosa/form/gen/pb/form"
+	"github.com/arwoosa/form/internal/dao/mongodb"
+	"github.com/arwoosa/form/internal/dao/repository"
 
 	"github.com/arwoosa/vulpes/ezgrpc"
 	"github.com/arwoosa/vulpes/log"

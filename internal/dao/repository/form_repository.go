@@ -6,7 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/internal/models"
 )
 
 // FormRepository defines the interface for form data access

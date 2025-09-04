@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package form.common;
 
-option go_package = "github.com/arwoosa/form-service/gen/pb/common";
+option go_package = "github.com/arwoosa/form/gen/pb/common";
 
 // Pagination for list responses
 message Pagination {

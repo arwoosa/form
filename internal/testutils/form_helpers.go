@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/internal/models"
 )
 
 // AssertFormTemplateEqual compares two form templates for equality

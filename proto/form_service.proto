@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package form.service;
 
-option go_package = "github.com/arwoosa/form-service/gen/pb/form";
+option go_package = "github.com/arwoosa/form/gen/pb/form";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";

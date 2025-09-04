@@ -3,7 +3,7 @@ package testutils
 import (
 	"github.com/stretchr/testify/mock"
 
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/internal/models"
 )
 
 // Custom matchers for testify mock

@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/internal/models"
 )
 
 // MongoContainer wraps testcontainers MongoDB container for form service

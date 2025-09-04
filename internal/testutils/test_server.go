@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
-	pb "github.com/arwoosa/form-service/gen/pb/form"
+	pb "github.com/arwoosa/form/gen/pb/form"
 )
 
 // TestServer wraps gRPC test server with bufconn for in-memory testing

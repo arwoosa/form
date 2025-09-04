@@ -5,7 +5,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/internal/models"
 )
 
 const (

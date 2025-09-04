@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/arwoosa/form-service/conf"
+	"github.com/arwoosa/form/conf"
 
 	"github.com/arwoosa/vulpes/log"
 )

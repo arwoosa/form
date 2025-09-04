@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/arwoosa/form-service/gen/pb/common"
-	pb "github.com/arwoosa/form-service/gen/pb/form"
-	"github.com/arwoosa/form-service/internal/models"
+	"github.com/arwoosa/form/gen/pb/common"
+	pb "github.com/arwoosa/form/gen/pb/form"
+	"github.com/arwoosa/form/internal/models"
 	"github.com/arwoosa/vulpes/ezgrpc"
 	"github.com/arwoosa/vulpes/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
