@@ -37,21 +37,6 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
 	}
 
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, input.MerchantID); err != nil {
-		log.Error("User does not have access to merchant",
-			log.String("user_merchant_id", userInfo.MerchantID),
-			log.String("requested_merchant_id", input.MerchantID))
-		return nil, ErrUnauthorized
-	}
-
 	var formSchema, formUISchema interface{}
 
 	// Handle template-based form creation
@@ -62,20 +47,20 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 			log.Error("Referenced template not found", log.String("template_id", input.TemplateID.Hex()))
 			return nil, ErrFormInvalidTemplate
 		}
-		
+
 		// Copy schema and UI schema from template
 		formSchema = template.Schema
 		formUISchema = template.UISchema
-		
-		log.Info("Creating form from template", 
+
+		log.Info("Creating form from template",
 			log.String("template_id", input.TemplateID.Hex()),
 			log.String("form_name", input.Name))
 	} else {
 		// Direct form creation - use provided schema
 		formSchema = input.Schema
 		formUISchema = input.UISchema
-		
-		log.Info("Creating form without template", 
+
+		log.Info("Creating form without template",
 			log.String("form_name", input.Name))
 	}
 
@@ -109,18 +94,6 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 
 // GetForm retrieves a form by ID
 func (s *FormService) GetForm(ctx context.Context, formID primitive.ObjectID, merchantID string) (*models.Form, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return nil, ErrUnauthorized
-	}
-
 	form, err := s.formRepo.FindByID(ctx, formID, merchantID)
 	if err != nil {
 		log.Error("Failed to get form", log.Err(err), log.String("form_id", formID.Hex()))
@@ -132,18 +105,6 @@ func (s *FormService) GetForm(ctx context.Context, formID primitive.ObjectID, me
 
 // ListForms retrieves forms with pagination and optional filters
 func (s *FormService) ListForms(ctx context.Context, options *models.FormQueryOptions) ([]*models.Form, int64, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, 0, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, options.MerchantID); err != nil {
-		return nil, 0, ErrUnauthorized
-	}
-
 	// Set default pagination if not provided
 	if options.Page <= 0 {
 		options.Page = 1
@@ -172,15 +133,8 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
 	}
 
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
 	// Get existing form to validate ownership
-	existing, err := s.formRepo.FindByID(ctx, input.ID, userInfo.MerchantID)
+	existing, err := s.formRepo.FindByID(ctx, input.ID, input.MerchantID)
 	if err != nil {
 		log.Error("Form not found for update", log.Err(err), log.String("form_id", input.ID.Hex()))
 		return nil, ErrFormNotFound
@@ -188,7 +142,7 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 
 	// Validate template reference if provided
 	if input.TemplateID != nil && !input.TemplateID.IsZero() {
-		templateExists, err := s.templateRepo.Exists(ctx, *input.TemplateID, userInfo.MerchantID)
+		templateExists, err := s.templateRepo.Exists(ctx, *input.TemplateID, input.MerchantID)
 		if err != nil {
 			log.Error("Failed to validate template", log.Err(err))
 			return nil, ErrInternalError
@@ -223,18 +177,6 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 
 // DeleteForm deletes a form
 func (s *FormService) DeleteForm(ctx context.Context, formID primitive.ObjectID, merchantID string) error {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return ErrUnauthorized
-	}
-
 	// Check if form exists
 	exists, err := s.formRepo.Exists(ctx, formID, merchantID)
 	if err != nil {
@@ -260,18 +202,6 @@ func (s *FormService) DeleteForm(ctx context.Context, formID primitive.ObjectID,
 
 // ListFormsByEvent retrieves forms associated with an event
 func (s *FormService) ListFormsByEvent(ctx context.Context, eventID primitive.ObjectID, merchantID string, page, pageSize int) ([]*models.Form, int64, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, 0, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return nil, 0, ErrUnauthorized
-	}
-
 	// Set default pagination
 	if page <= 0 {
 		page = 1
@@ -294,18 +224,6 @@ func (s *FormService) ListFormsByEvent(ctx context.Context, eventID primitive.Ob
 
 // ListFormsByTemplate retrieves forms associated with a template
 func (s *FormService) ListFormsByTemplate(ctx context.Context, templateID primitive.ObjectID, merchantID string, page, pageSize int) ([]*models.Form, int64, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, 0, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return nil, 0, ErrUnauthorized
-	}
-
 	// Set default pagination
 	if page <= 0 {
 		page = 1

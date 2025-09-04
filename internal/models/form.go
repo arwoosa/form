@@ -86,6 +86,7 @@ type UpdateFormInput struct {
 	Schema      interface{}         `json:"schema" validate:"required"`
 	UISchema    interface{}         `json:"ui_schema"`
 	UpdatedBy   string              `json:"updated_by" validate:"required"`
+	MerchantID  string              `json:"merchant_id" validate:"required"`
 }
 
 // FormQueryOptions represents query options for listing forms

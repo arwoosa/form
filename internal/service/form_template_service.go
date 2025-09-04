@@ -35,21 +35,6 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
 	}
 
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, input.MerchantID); err != nil {
-		log.Error("User does not have access to merchant",
-			log.String("user_merchant_id", userInfo.MerchantID),
-			log.String("requested_merchant_id", input.MerchantID))
-		return nil, ErrUnauthorized
-	}
-
 	// Check template limit for merchant
 	if err := s.checkTemplateLimit(ctx, input.MerchantID); err != nil {
 		return nil, err
@@ -83,18 +68,6 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 
 // GetTemplate retrieves a form template by ID
 func (s *FormTemplateService) GetTemplate(ctx context.Context, templateID primitive.ObjectID, merchantID string) (*models.FormTemplate, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return nil, ErrUnauthorized
-	}
-
 	template, err := s.templateRepo.FindByID(ctx, templateID, merchantID)
 	if err != nil {
 		log.Error("Failed to get template", log.Err(err), log.String("template_id", templateID.Hex()))
@@ -106,18 +79,6 @@ func (s *FormTemplateService) GetTemplate(ctx context.Context, templateID primit
 
 // ListTemplates retrieves form templates with pagination
 func (s *FormTemplateService) ListTemplates(ctx context.Context, options *models.FormTemplateQueryOptions) ([]*models.FormTemplate, int64, error) {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, 0, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, options.MerchantID); err != nil {
-		return nil, 0, ErrUnauthorized
-	}
-
 	// Set default pagination if not provided
 	if options.Page <= 0 {
 		options.Page = 1
@@ -146,15 +107,8 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
 	}
 
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
 	// Get existing template to validate ownership
-	existing, err := s.templateRepo.FindByID(ctx, input.ID, userInfo.MerchantID)
+	existing, err := s.templateRepo.FindByID(ctx, input.ID, input.MerchantID)
 	if err != nil {
 		log.Error("Template not found for update", log.Err(err), log.String("template_id", input.ID.Hex()))
 		return nil, ErrTemplateNotFound
@@ -182,18 +136,6 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 
 // DeleteTemplate deletes a form template
 func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID primitive.ObjectID, merchantID string) error {
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, merchantID); err != nil {
-		return ErrUnauthorized
-	}
-
 	// Check if template exists
 	exists, err := s.templateRepo.Exists(ctx, templateID, merchantID)
 	if err != nil {
@@ -223,18 +165,6 @@ func (s *FormTemplateService) DuplicateTemplate(ctx context.Context, input *mode
 	if err := validate.Struct(input); err != nil {
 		log.Error("DuplicateTemplate validation failed", log.Err(err))
 		return nil, fmt.Errorf("%w: %v", ErrInvalidInput, err)
-	}
-
-	// Get user info from context
-	userInfo, err := GetUserInfo(ctx)
-	if err != nil {
-		log.Error("Failed to get user info", log.Err(err))
-		return nil, ErrUnauthorized
-	}
-
-	// Validate merchant access
-	if err := ValidateUserAccess(userInfo, input.MerchantID); err != nil {
-		return nil, ErrUnauthorized
 	}
 
 	// Check template limit for merchant

@@ -153,6 +153,7 @@ func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateF
 		Name:        req.Name,
 		Description: req.Description,
 		UpdatedBy:   user.ID,
+		MerchantID:  user.Merchant,
 	}
 
 	// Convert schema if provided
@@ -384,6 +385,7 @@ func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormReque
 		Name:        req.Name,
 		Description: req.Description,
 		UpdatedBy:   user.ID,
+		MerchantID:  user.Merchant,
 	}
 
 	// Convert optional template ID
