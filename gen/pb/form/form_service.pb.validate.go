@@ -59,16 +59,7 @@ func (m *FormTemplate) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := FormTemplateValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Name
 
 	// no validation rules for MerchantId
 
@@ -293,10 +284,10 @@ func (m *CreateFormTemplateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 50 {
 		err := CreateFormTemplateRequestValidationError{
 			field:  "Name",
-			reason: "value length must be at least 1 runes",
+			reason: "value length must be between 1 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -304,7 +295,27 @@ func (m *CreateFormTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
+		err := CreateFormTemplateRequestValidationError{
+			field:  "Description",
+			reason: "value length must be between 1 and 140 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetSchema() == nil {
+		err := CreateFormTemplateRequestValidationError{
+			field:  "Schema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {
@@ -333,6 +344,17 @@ func (m *CreateFormTemplateRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetUischema() == nil {
+		err := CreateFormTemplateRequestValidationError{
+			field:  "Uischema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -897,10 +919,10 @@ func (m *UpdateFormTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 50 {
 		err := UpdateFormTemplateRequestValidationError{
 			field:  "Name",
-			reason: "value length must be at least 1 runes",
+			reason: "value length must be between 1 and 50 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -908,7 +930,27 @@ func (m *UpdateFormTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
+		err := UpdateFormTemplateRequestValidationError{
+			field:  "Description",
+			reason: "value length must be between 1 and 140 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetSchema() == nil {
+		err := UpdateFormTemplateRequestValidationError{
+			field:  "Schema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {
@@ -937,6 +979,17 @@ func (m *UpdateFormTemplateRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetUischema() == nil {
+		err := UpdateFormTemplateRequestValidationError{
+			field:  "Uischema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if all {
@@ -1073,17 +1126,6 @@ func (m *DuplicateFormTemplateRequest) validate(all bool) error {
 	if utf8.RuneCountInString(m.GetId()) < 1 {
 		err := DuplicateFormTemplateRequestValidationError{
 			field:  "Id",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := DuplicateFormTemplateRequestValidationError{
-			field:  "Name",
 			reason: "value length must be at least 1 runes",
 		}
 		if !all {
@@ -1328,22 +1370,11 @@ func (m *Form) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := FormValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Name
 
 	// no validation rules for EventId
 
 	// no validation rules for MerchantId
-
-	// no validation rules for TemplateId
 
 	// no validation rules for Description
 
@@ -1566,17 +1597,6 @@ func (m *CreateFormRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := CreateFormRequestValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if utf8.RuneCountInString(m.GetEventId()) < 1 {
 		err := CreateFormRequestValidationError{
 			field:  "EventId",
@@ -1588,7 +1608,38 @@ func (m *CreateFormRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Description
+	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 50 {
+		err := CreateFormRequestValidationError{
+			field:  "Name",
+			reason: "value length must be between 1 and 50 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
+		err := CreateFormRequestValidationError{
+			field:  "Description",
+			reason: "value length must be between 1 and 140 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetSchema() == nil {
+		err := CreateFormRequestValidationError{
+			field:  "Schema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {
@@ -1617,6 +1668,17 @@ func (m *CreateFormRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetUischema() == nil {
+		err := CreateFormRequestValidationError{
+			field:  "Uischema",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if all {

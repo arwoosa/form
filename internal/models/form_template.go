@@ -75,7 +75,7 @@ type UpdateFormTemplateInput struct {
 // DuplicateFormTemplateInput represents the input for duplicating a form template
 type DuplicateFormTemplateInput struct {
 	SourceID   primitive.ObjectID `json:"source_id" validate:"required"`
-	Name       string             `json:"name" validate:"required,min=1,max=100"`
+	NameSuffix string             `json:"name_suffix" validate:"required,min=1,max=50"`
 	CreatedBy  string             `json:"created_by" validate:"required"`
 	MerchantID string             `json:"merchant_id" validate:"required"`
 }

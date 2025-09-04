@@ -111,10 +111,10 @@ message FormTemplate {
 }
 
 message CreateFormTemplateRequest {
-    string name = 1 [(validate.rules).string.min_len = 1];
-    string description = 2;
-    google.protobuf.Struct schema = 3;
-    google.protobuf.Struct uischema = 4;
+    string name = 1 [(validate.rules).string = {min_len: 1, max_len: 50}];
+    string description = 2 [(validate.rules).string = {min_len: 1, max_len: 140}];
+    google.protobuf.Struct schema = 3 [(validate.rules).message.required = true];
+    google.protobuf.Struct uischema = 4 [(validate.rules).message.required = true];
 }
 
 message CreateFormTemplateResponse {
@@ -133,16 +133,15 @@ message ListFormTemplatesResponse {
 
 message UpdateFormTemplateRequest {
     string id = 1 [(validate.rules).string.min_len = 1];
-    string name = 2 [(validate.rules).string.min_len = 1];
-    string description = 3;
-    google.protobuf.Struct schema = 4;
-    google.protobuf.Struct uischema = 5;
+    string name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+    string description = 3 [(validate.rules).string = {min_len: 1, max_len: 140}];
+    google.protobuf.Struct schema = 4 [(validate.rules).message.required = true];
+    google.protobuf.Struct uischema = 5 [(validate.rules).message.required = true];
 }
 
 
 message DuplicateFormTemplateRequest {
     string id = 1 [(validate.rules).string.min_len = 1];
-    string name = 2 [(validate.rules).string.min_len = 1];
 }
 
 message DuplicateFormTemplateResponse {
@@ -165,11 +164,11 @@ message Form {
 }
 
 message CreateFormRequest {
-    string name = 1 [(validate.rules).string.min_len = 1];
-    string event_id = 2 [(validate.rules).string.min_len = 1]; // required
-    string description = 4;
-    google.protobuf.Struct schema = 5;
-    google.protobuf.Struct uischema = 6;
+    string event_id = 1 [(validate.rules).string.min_len = 1]; // required
+    string name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+    string description = 3 [(validate.rules).string = {min_len: 1, max_len: 140}];
+    google.protobuf.Struct schema = 4 [(validate.rules).message.required = true];
+    google.protobuf.Struct uischema = 5 [(validate.rules).message.required = true];
 }
 
 message CreateFormResponse {

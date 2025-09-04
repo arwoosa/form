@@ -197,7 +197,7 @@ func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.Dupl
 
 	input := &models.DuplicateFormTemplateInput{
 		SourceID:   sourceID,
-		Name:       req.Name + " copy",
+		NameSuffix: " copy",
 		CreatedBy:  user.ID,
 		MerchantID: user.Merchant,
 	}

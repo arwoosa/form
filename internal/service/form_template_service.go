@@ -172,7 +172,7 @@ func (s *FormTemplateService) DuplicateTemplate(ctx context.Context, input *mode
 	}
 
 	// Duplicate template
-	duplicate, err := s.templateRepo.Duplicate(ctx, input.SourceID, input.Name, input.CreatedBy, input.MerchantID)
+	duplicate, err := s.templateRepo.Duplicate(ctx, input.SourceID, input.NameSuffix, input.CreatedBy, input.MerchantID)
 	if err != nil {
 		log.Error("Failed to duplicate template", log.Err(err))
 		return nil, ErrInternalError

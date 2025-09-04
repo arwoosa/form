@@ -33,7 +33,7 @@ type FormTemplateRepository interface {
 	Exists(ctx context.Context, templateID primitive.ObjectID) (bool, error)
 
 	// Duplicate a template with new name
-	Duplicate(ctx context.Context, sourceID primitive.ObjectID, newName, createdBy, merchantID string) (*models.FormTemplate, error)
+	Duplicate(ctx context.Context, sourceID primitive.ObjectID, nameSuffix, createdBy, merchantID string) (*models.FormTemplate, error)
 }
 
 // NewFormTemplateRepository creates a new form template repository implementation
@@ -138,7 +138,7 @@ func (r *mongoFormTemplateRepository) Exists(ctx context.Context, templateID pri
 }
 
 // Duplicate implements FormTemplateRepository.Duplicate
-func (r *mongoFormTemplateRepository) Duplicate(ctx context.Context, sourceID primitive.ObjectID, newName, createdBy, merchantID string) (*models.FormTemplate, error) {
+func (r *mongoFormTemplateRepository) Duplicate(ctx context.Context, sourceID primitive.ObjectID, nameSuffix, createdBy, merchantID string) (*models.FormTemplate, error) {
 	// First, find the source template
 	source, err := r.FindByID(ctx, sourceID)
 	if err != nil {
@@ -148,7 +148,7 @@ func (r *mongoFormTemplateRepository) Duplicate(ctx context.Context, sourceID pr
 	// Create a duplicate with new name and metadata
 	duplicate := &models.FormTemplate{
 		ID:          primitive.NewObjectID(),
-		Name:        newName,
+		Name:        source.Name + nameSuffix,
 		MerchantID:  merchantID,
 		Description: source.Description,
 		Schema:      source.Schema,

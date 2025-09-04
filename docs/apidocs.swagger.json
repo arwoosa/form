@@ -401,12 +401,7 @@
   },
   "definitions": {
     "FormServiceDuplicateFormTemplateBody": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
+      "type": "object"
     },
     "FormServiceUpdateFormBody": {
       "type": "object",
@@ -503,12 +498,12 @@
     "serviceCreateFormRequest": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
         "event_id": {
           "type": "string",
           "title": "required"
+        },
+        "name": {
+          "type": "string"
         },
         "description": {
           "type": "string"
@@ -572,15 +567,10 @@
           "type": "string"
         },
         "event_id": {
-          "type": "string",
-          "title": "Optional reference to an event"
+          "type": "string"
         },
         "merchant_id": {
           "type": "string"
-        },
-        "template_id": {
-          "type": "string",
-          "title": "Optional reference to a form template"
         },
         "description": {
           "type": "string"
