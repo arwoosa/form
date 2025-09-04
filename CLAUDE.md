@@ -20,10 +20,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `make grpc` - Generate gRPC code from .proto files
 - Generates Go files, gRPC-Gateway, and validation code
 
-### Dependency Injection
-- `make wire` - Generate Wire dependency injection code
-- `make clear_wire` - Remove generated wire files
-
 ### Testing
 - `make test` - Run all tests (includes unit and integration tests)
 - `make test-unit` - Run unit tests for models and service layers (recommended)
