@@ -35,7 +35,7 @@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 
 #### Application Settings
 ```yaml
-name: "partivo_event"          # Service name
+name: "partivo_form"          # Service name
 mode: "dev"                    # Environment: "dev" or "prod"
 port: 8081                     # Service port
 version: "1.0.0"               # Application version
@@ -55,7 +55,7 @@ mongodb:
   port: 27017                  # MongoDB port
   # user: ""                   # MongoDB username (optional)
   # password: ""               # MongoDB password (optional)
-  db: "partivo_event"         # Database name
+  db: "partivo_form"         # Database name
 ```
 
 #### External Services
@@ -102,15 +102,11 @@ docker run -d -p 27017:27017 --name mongodb mongo:latest
 # Build the service
 make build
 
-# Run Console API (management)
-make run-console
-
-# Run Public API (read-only)
-make run-public
+# Run the service
+make run
 
 # Or run with custom config
-go run ./cmd/event-server console --config conf/config.yaml
-go run ./cmd/event-server public --config conf/config.yaml
+go run ./cmd/form-server --config conf/config.yaml
 ```
 
 ### 2. Docker Deployment
@@ -118,12 +114,12 @@ go run ./cmd/event-server public --config conf/config.yaml
 #### Build Docker Image
 ```bash
 # Build image
-docker build -t partivo_event:1.0 .
+docker build -t partivo_form:1.0 .
 
 # Run container
 make docker_run
 # or
-docker run -p 8081:8081 -d partivo_event:1.0
+docker run -p 8081:8081 -d partivo_form:1.0
 ```
 
 #### Docker Compose Deployment (Recommended)
@@ -132,7 +128,7 @@ Use the provided Docker Compose setup to run both Console and Public APIs:
 
 ```bash
 # Build image first
-docker build -t partivo_event:1.0 .
+docker build -t partivo_form:1.0 .
 
 # Start all services (Console API + Public API + MongoDB)
 make docker-compose-up
@@ -147,19 +143,12 @@ make docker-compose-down
 ```
 
 **Service URLs:**
-- Console API: http://localhost:8081
-- Public API: http://localhost:8082
+- Form Service API: http://localhost:8081
 - MongoDB: localhost:27017
 
-**Individual service commands:**
+**Service commands:**
 ```bash
-# Run only Console API
-make docker-console-only
-
-# Run only Public API
-make docker-public-only
-
-# Restart services
+# Restart service
 make docker-restart
 ```
 
@@ -173,7 +162,7 @@ export CONFIG_FILE=/app/conf/config_production.yaml
 # MongoDB connection (if using environment variables)
 export MONGODB_HOST=your-mongodb-host
 export MONGODB_PORT=27017
-export MONGODB_DB=partivo_event_prod
+export MONGODB_DB=partivo_form_prod
 ```
 
 #### Production Checklist
@@ -186,25 +175,23 @@ export MONGODB_DB=partivo_event_prod
 
 ## Service Startup
 
-### Dual API Architecture
+### Form Service API
 
-The service provides two separate APIs:
+The service provides a unified API for form management:
 
-#### Console API (`make run-console`)
-- **Purpose**: Internal management operations
-- **Endpoints**: `/console/events/*`
-- **Features**: Full CRUD operations, event state management
+#### Form Templates API
+- **Endpoints**: `/form_templates/*`
+- **Features**: Full CRUD operations for form templates
 - **Authentication**: Requires API Gateway headers
 
-#### Public API (`make run-public`)
-- **Purpose**: Public read-only access
-- **Endpoints**: `/events/*`
-- **Features**: Read published events only
-- **Authentication**: Optional, read-only operations
+#### Forms API
+- **Endpoints**: `/forms/*`
+- **Features**: Full CRUD operations for forms
+- **Authentication**: Requires API Gateway headers
 
 ### API Gateway Headers
 
-Both services expect these headers from the API Gateway:
+The service expects these headers from the API Gateway:
 ```
 X-User-Id: user-uuid
 X-User-Email: user@example.com  
@@ -220,8 +207,7 @@ Monitor services using Docker Compose:
 docker-compose ps
 
 # View service logs
-docker-compose logs -f event-console
-docker-compose logs -f event-public
+docker-compose logs -f form-service
 
 # Check resource usage
 docker stats
@@ -350,7 +336,7 @@ docker logs -f container_name
 grpcurl -plaintext 192.168.1.134:8081 list
 
 # Test MongoDB connection  
-mongosh mongodb://localhost:27017/partivo_event
+mongosh mongodb://localhost:27017/partivo_form
 ```
 
 ### Performance Monitoring
@@ -358,15 +344,15 @@ mongosh mongodb://localhost:27017/partivo_event
 #### MongoDB Indexes
 ```bash
 # Check if indexes are created
-mongosh partivo_event --eval "db.events.getIndexes()"
-mongosh partivo_event --eval "db.sessions.getIndexes()"
+mongosh partivo_form --eval "db.form_templates.getIndexes()"
+mongosh partivo_form --eval "db.forms.getIndexes()"
 ```
 
 #### Memory and CPU Usage
 ```bash
 # Monitor resource usage
-docker stats partivo_event
-top -p $(pgrep event-server)
+docker stats partivo_form
+top -p $(pgrep form-server)
 ```
 
 ---

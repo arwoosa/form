@@ -77,9 +77,9 @@ func TestBusinessError_Error(t *testing.T) {
 		{
 			name:           "Business error with cause",
 			code:           "DATABASE_ERROR",
-			message:        "failed to save event",
+			message:        "failed to save form",
 			cause:          errors.New("connection timeout"),
-			expectedOutput: "DATABASE_ERROR: failed to save event (connection timeout)",
+			expectedOutput: "DATABASE_ERROR: failed to save form (connection timeout)",
 		},
 		{
 			name:           "Empty code",
@@ -208,13 +208,9 @@ func TestCommonErrors(t *testing.T) {
 		err      error
 		expected string
 	}{
-		{"ErrEventNotFound", ErrEventNotFound, "event not found"},
-		{"ErrSessionNotFound", ErrSessionNotFound, "session not found"},
-		{"ErrInvalidStatus", ErrInvalidStatus, "invalid status"},
-		{"ErrInvalidVisibility", ErrInvalidVisibility, "invalid visibility"},
-		{"ErrInvalidTransition", ErrInvalidTransition, "invalid status transition"},
-		{"ErrNoSessions", ErrNoSessions, "event must have at least one session"},
-		{"ErrHasOrders", ErrHasOrders, "event has existing orders"},
+		{"ErrFormNotFound", ErrFormNotFound, "form not found"},
+		{"ErrTemplateNotFound", ErrTemplateNotFound, "form template not found"},
+		{"ErrInvalidSchema", ErrInvalidSchema, "invalid form schema"},
 		{"ErrUnauthorized", ErrUnauthorized, "unauthorized access"},
 		{"ErrInvalidMerchantID", ErrInvalidMerchantID, "invalid merchant_id"},
 	}
@@ -289,15 +285,11 @@ func TestValidationErrorChaining(t *testing.T) {
 func TestBusinessErrorCodes(t *testing.T) {
 	// Test common business error codes that might be used in the application
 	commonCodes := []string{
-		"INVALID_STATUS_TRANSITION",
-		"PUBLISHED_IMMUTABLE",
 		"UNAUTHORIZED_ACCESS",
-		"EVENT_NOT_FOUND",
-		"SESSION_NOT_FOUND",
-		"HAS_ORDERS",
-		"NO_SESSIONS",
-		"INVALID_TIME_RANGE",
-		"DUPLICATE_SESSION",
+		"FORM_NOT_FOUND",
+		"TEMPLATE_NOT_FOUND",
+		"INVALID_SCHEMA",
+		"INVALID_MERCHANT_ID",
 	}
 
 	for _, code := range commonCodes {
