@@ -122,8 +122,8 @@ message CreateFormTemplateResponse {
 }
 
 message ListFormTemplatesRequest {
-    int32 page = 1 [(validate.rules).int32.gte = 1];
-    int32 page_size = 2 [(validate.rules).int32 = {gte: 1, lte: 2000}];
+    int32 page = 1;                    // Optional: defaults to 1 if not provided or <= 0
+    int32 page_size = 2;               // Optional: defaults to config value if not provided or <= 0
     string sort_by = 3 [(validate.rules).string = {in: ["", "name", "created_at", "updated_at"]}];    // Optional sort field
     string sort_order = 4 [(validate.rules).string = {in: ["", "asc", "desc"]}];   // Optional sort order
 }
@@ -178,9 +178,9 @@ message CreateFormResponse {
 }
 
 message ListFormsRequest {
-    int32 page = 1 [(validate.rules).int32.gte = 1];
-    int32 page_size = 2 [(validate.rules).int32 = {gte: 1, lte: 2000}];
-    string event_id = 3;    // Optional filter by event
+    int32 page = 1;                    // Optional: defaults to 1 if not provided or <= 0
+    int32 page_size = 2;               // Optional: defaults to config value if not provided or <= 0
+    string event_id = 3;               // Optional filter by event
     string sort_by = 4 [(validate.rules).string = {in: ["", "name", "created_at", "updated_at"]}];    // Optional sort field
     string sort_order = 5 [(validate.rules).string = {in: ["", "asc", "desc"]}];   // Optional sort order
 }

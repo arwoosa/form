@@ -619,27 +619,9 @@ func (m *ListFormTemplatesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetPage() < 1 {
-		err := ListFormTemplatesRequestValidationError{
-			field:  "Page",
-			reason: "value must be greater than or equal to 1",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Page
 
-	if val := m.GetPageSize(); val < 1 || val > 2000 {
-		err := ListFormTemplatesRequestValidationError{
-			field:  "PageSize",
-			reason: "value must be inside range [1, 2000]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for PageSize
 
 	if _, ok := _ListFormTemplatesRequest_SortBy_InLookup[m.GetSortBy()]; !ok {
 		err := ListFormTemplatesRequestValidationError{
@@ -1978,27 +1960,9 @@ func (m *ListFormsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetPage() < 1 {
-		err := ListFormsRequestValidationError{
-			field:  "Page",
-			reason: "value must be greater than or equal to 1",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for Page
 
-	if val := m.GetPageSize(); val < 1 || val > 2000 {
-		err := ListFormsRequestValidationError{
-			field:  "PageSize",
-			reason: "value must be inside range [1, 2000]",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for PageSize
 
 	// no validation rules for EventId
 

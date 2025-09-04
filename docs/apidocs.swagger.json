@@ -37,6 +37,7 @@
         "parameters": [
           {
             "name": "page",
+            "description": "Optional: defaults to 1 if not provided or \u003c= 0",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -44,6 +45,7 @@
           },
           {
             "name": "page_size",
+            "description": "Optional: defaults to config value if not provided or \u003c= 0",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -258,6 +260,7 @@
         "parameters": [
           {
             "name": "page",
+            "description": "Optional: defaults to 1 if not provided or \u003c= 0",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -265,6 +268,7 @@
           },
           {
             "name": "page_size",
+            "description": "Optional: defaults to config value if not provided or \u003c= 0",
             "in": "query",
             "required": false,
             "type": "integer",
