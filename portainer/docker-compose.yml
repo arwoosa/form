@@ -1,0 +1,14 @@
+services:
+  event-console:
+    image: sjc.vultrcr.com/oosa/form:dev
+    container_name: form-console
+    restart: always
+    volumes:
+      - ${CONFIG_FILE}:/etc/config.yaml:ro
+    command: ["console", "--config", "/etc/config.yaml"]
+    environment:
+      - SERVICE_NAME=partivo_form_console
+networks:
+  default:
+    name: oosa-network
+    external: true

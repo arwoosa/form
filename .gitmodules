@@ -1,3 +1,0 @@
-[submodule "pkg/vulpes"]
-	path = pkg/vulpes
-	url = https://github.com/arwoosa/vulpes.git
