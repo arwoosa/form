@@ -19,9 +19,6 @@ RUN go build -o partivo_form ./cmd/form-server/
 ###################
 FROM scratch
 
-# Copy timezone data from builder
-COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /usr/local/go/lib/time/zoneinfo.zip
-
 WORKDIR /app
 COPY ./conf /app/conf
 
