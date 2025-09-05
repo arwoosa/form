@@ -155,10 +155,10 @@ func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID pri
 		return ErrTemplateNotFound
 	}
 
-	// Delete Keto relation tuples first
+	// Delete Keto relation tuples first (best effort)
 	if err := relation.DeleteObjectId(ctx, "FormTemplate", templateID.Hex()); err != nil {
-		log.Error("Failed to delete Keto relation tuples for template", log.Err(err))
-		return fmt.Errorf("failed to delete access control: %w", err)
+		log.Error("Failed to delete Keto relation tuples for template - continuing with deletion", log.Err(err))
+		// Don't return here - continue with database cleanup to avoid data inconsistency
 	}
 
 	// Delete template

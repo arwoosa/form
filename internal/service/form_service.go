@@ -149,10 +149,10 @@ func (s *FormService) DeleteForm(ctx context.Context, formID primitive.ObjectID)
 		return ErrFormNotFound
 	}
 
-	// Delete Keto relation tuples first
+	// Delete Keto relation tuples first (best effort)
 	if err := relation.DeleteObjectId(ctx, "Form", formID.Hex()); err != nil {
-		log.Error("Failed to delete Keto relation tuples for form", log.Err(err))
-		return fmt.Errorf("failed to delete access control: %w", err)
+		log.Error("Failed to delete Keto relation tuples for form - continuing with deletion", log.Err(err))
+		// Don't return here - continue with database cleanup to avoid data inconsistency
 	}
 
 	// Delete form
