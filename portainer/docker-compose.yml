@@ -5,7 +5,7 @@ services:
     restart: always
     volumes:
       - ${CONFIG_FILE}:/etc/config.yaml:ro
-    command: ["console", "--config", "/etc/config.yaml"]
+    command: ["server", "--config", "/etc/config.yaml"]
     environment:
       - SERVICE_NAME=partivo_form_console
 networks:
