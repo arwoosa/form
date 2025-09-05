@@ -119,7 +119,7 @@ docker build -t partivo_form:1.0 .
 # Run container
 make docker_run
 # or
-docker run -p 8081:8081 -d partivo_form:1.0
+docker run --rm partivo_form:1.0 server --config conf/config_docker.yaml 
 ```
 
 #### Docker Compose Deployment (Recommended)
