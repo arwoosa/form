@@ -10,6 +10,7 @@ import (
 	"github.com/arwoosa/form/internal/dao/repository"
 	"github.com/arwoosa/form/internal/models"
 	"github.com/arwoosa/vulpes/log"
+	"github.com/arwoosa/vulpes/relation"
 	"github.com/arwoosa/vulpes/validate"
 )
 
@@ -55,6 +56,16 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 	if err := s.templateRepo.Create(ctx, template); err != nil {
 		log.Error("Failed to create template", log.Err(err))
 		return nil, ErrInternalError
+	}
+
+	// Add Keto relation tuple for template owner
+	if err := relation.AddUserResourceRole(ctx, input.CreatedBy, "FormTemplate", template.ID.Hex(), relation.RoleOwner); err != nil {
+		log.Error("Failed to create Keto relation tuple for template", log.Err(err))
+		// Rollback: delete the created template since Keto operation failed
+		if deleteErr := s.templateRepo.Delete(ctx, template.ID); deleteErr != nil {
+			log.Error("Failed to rollback template creation", log.Err(deleteErr))
+		}
+		return nil, fmt.Errorf("failed to create access control: %w", err)
 	}
 
 	log.Info("Template created successfully",
@@ -144,6 +155,12 @@ func (s *FormTemplateService) DeleteTemplate(ctx context.Context, templateID pri
 		return ErrTemplateNotFound
 	}
 
+	// Delete Keto relation tuples first
+	if err := relation.DeleteObjectId(ctx, "FormTemplate", templateID.Hex()); err != nil {
+		log.Error("Failed to delete Keto relation tuples for template", log.Err(err))
+		return fmt.Errorf("failed to delete access control: %w", err)
+	}
+
 	// Delete template
 	if err := s.templateRepo.Delete(ctx, templateID); err != nil {
 		log.Error("Failed to delete template", log.Err(err))
@@ -174,6 +191,16 @@ func (s *FormTemplateService) DuplicateTemplate(ctx context.Context, input *mode
 	if err != nil {
 		log.Error("Failed to duplicate template", log.Err(err))
 		return nil, ErrInternalError
+	}
+
+	// Add Keto relation tuple for duplicated template owner
+	if err := relation.AddUserResourceRole(ctx, input.CreatedBy, "FormTemplate", duplicate.ID.Hex(), relation.RoleOwner); err != nil {
+		log.Error("Failed to create Keto relation tuple for duplicated template", log.Err(err))
+		// Rollback: delete the duplicated template since Keto operation failed
+		if deleteErr := s.templateRepo.Delete(ctx, duplicate.ID); deleteErr != nil {
+			log.Error("Failed to rollback template duplication", log.Err(deleteErr))
+		}
+		return nil, fmt.Errorf("failed to create access control: %w", err)
 	}
 
 	log.Info("Template duplicated successfully",

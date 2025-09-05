@@ -10,6 +10,7 @@ import (
 	"github.com/arwoosa/form/internal/dao/repository"
 	"github.com/arwoosa/form/internal/models"
 	"github.com/arwoosa/vulpes/log"
+	"github.com/arwoosa/vulpes/relation"
 	"github.com/arwoosa/vulpes/validate"
 )
 
@@ -52,6 +53,16 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 	if err := s.formRepo.Create(ctx, form); err != nil {
 		log.Error("Failed to create form", log.Err(err))
 		return nil, ErrInternalError
+	}
+
+	// Add Keto relation tuple for form owner
+	if err := relation.AddUserResourceRole(ctx, input.CreatedBy, "Form", form.ID.Hex(), relation.RoleOwner); err != nil {
+		log.Error("Failed to create Keto relation tuple for form", log.Err(err))
+		// Rollback: delete the created form since Keto operation failed
+		if deleteErr := s.formRepo.Delete(ctx, form.ID); deleteErr != nil {
+			log.Error("Failed to rollback form creation", log.Err(deleteErr))
+		}
+		return nil, fmt.Errorf("failed to create access control: %w", err)
 	}
 
 	log.Info("Form created successfully",
@@ -136,6 +147,12 @@ func (s *FormService) DeleteForm(ctx context.Context, formID primitive.ObjectID)
 	}
 	if !exists {
 		return ErrFormNotFound
+	}
+
+	// Delete Keto relation tuples first
+	if err := relation.DeleteObjectId(ctx, "Form", formID.Hex()); err != nil {
+		log.Error("Failed to delete Keto relation tuples for form", log.Err(err))
+		return fmt.Errorf("failed to delete access control: %w", err)
 	}
 
 	// Delete form
