@@ -38,10 +38,9 @@ func (s *GRPCFormServer) CreateFormTemplate(ctx context.Context, req *pb.CreateF
 
 	// Convert request to service input
 	input := &models.CreateFormTemplateInput{
-		Name:        req.Name,
-		Description: req.Description,
-		MerchantID:  user.Merchant,
-		CreatedBy:   user.ID,
+		Name:       req.Name,
+		MerchantID: user.Merchant,
+		CreatedBy:  user.ID,
 	}
 
 	// Convert schema if provided
@@ -146,10 +145,9 @@ func (s *GRPCFormServer) UpdateFormTemplate(ctx context.Context, req *pb.UpdateF
 
 	// Convert request to service input
 	input := &models.UpdateFormTemplateInput{
-		ID:          templateID,
-		Name:        req.Name,
-		Description: req.Description,
-		UpdatedBy:   user.ID,
+		ID:        templateID,
+		Name:      req.Name,
+		UpdatedBy: user.ID,
 	}
 
 	// Convert schema if provided
@@ -228,10 +226,8 @@ func (s *GRPCFormServer) CreateForm(ctx context.Context, req *pb.CreateFormReque
 
 	// Convert request to service input
 	input := &models.CreateFormInput{
-		Name:        req.Name,
-		Description: req.Description,
-		MerchantID:  user.Merchant,
-		CreatedBy:   user.ID,
+		MerchantID: user.Merchant,
+		CreatedBy:  user.ID,
 	}
 
 	// Convert optional event ID
@@ -352,10 +348,8 @@ func (s *GRPCFormServer) UpdateForm(ctx context.Context, req *pb.UpdateFormReque
 
 	// Convert request to service input
 	input := &models.UpdateFormInput{
-		ID:          formID,
-		Name:        req.Name,
-		Description: req.Description,
-		UpdatedBy:   user.ID,
+		ID:        formID,
+		UpdatedBy: user.ID,
 	}
 
 	// Convert schema if provided
@@ -418,16 +412,15 @@ func (s *GRPCFormServer) convertFormTemplateToProto(template *models.FormTemplat
 	}
 
 	return &pb.FormTemplate{
-		Id:          template.ID.Hex(),
-		Name:        template.Name,
-		MerchantId:  template.MerchantID,
-		Description: template.Description,
-		Schema:      schemaStruct,
-		Uischema:    uiSchemaStruct,
-		CreatedAt:   timestamppb.New(template.GetCreatedAt()),
-		CreatedBy:   template.CreatedBy,
-		UpdatedAt:   timestamppb.New(template.GetUpdatedAt()),
-		UpdatedBy:   template.UpdatedBy,
+		Id:         template.ID.Hex(),
+		Name:       template.Name,
+		MerchantId: template.MerchantID,
+		Schema:     schemaStruct,
+		Uischema:   uiSchemaStruct,
+		CreatedAt:  timestamppb.New(template.GetCreatedAt()),
+		CreatedBy:  template.CreatedBy,
+		UpdatedAt:  timestamppb.New(template.GetUpdatedAt()),
+		UpdatedBy:  template.UpdatedBy,
 	}, nil
 }
 
@@ -458,16 +451,14 @@ func (s *GRPCFormServer) convertFormToProto(form *models.Form) (*pb.Form, error)
 	}
 
 	pbForm := &pb.Form{
-		Id:          form.ID.Hex(),
-		Name:        form.Name,
-		MerchantId:  form.MerchantID,
-		Description: form.Description,
-		Schema:      schemaStruct,
-		Uischema:    uiSchemaStruct,
-		CreatedAt:   timestamppb.New(form.GetCreatedAt()),
-		CreatedBy:   form.CreatedBy,
-		UpdatedAt:   timestamppb.New(form.GetUpdatedAt()),
-		UpdatedBy:   form.UpdatedBy,
+		Id:         form.ID.Hex(),
+		MerchantId: form.MerchantID,
+		Schema:     schemaStruct,
+		Uischema:   uiSchemaStruct,
+		CreatedAt:  timestamppb.New(form.GetCreatedAt()),
+		CreatedBy:  form.CreatedBy,
+		UpdatedAt:  timestamppb.New(form.GetUpdatedAt()),
+		UpdatedBy:  form.UpdatedBy,
 	}
 
 	if form.EventID != nil {

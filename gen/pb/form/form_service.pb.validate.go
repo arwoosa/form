@@ -63,8 +63,6 @@ func (m *FormTemplate) validate(all bool) error {
 
 	// no validation rules for MerchantId
 
-	// no validation rules for Description
-
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {
 		case interface{ ValidateAll() error }:
@@ -288,17 +286,6 @@ func (m *CreateFormTemplateRequest) validate(all bool) error {
 		err := CreateFormTemplateRequestValidationError{
 			field:  "Name",
 			reason: "value length must be between 1 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
-		err := CreateFormTemplateRequestValidationError{
-			field:  "Description",
-			reason: "value length must be between 1 and 140 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -947,17 +934,6 @@ func (m *UpdateFormTemplateRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
-		err := UpdateFormTemplateRequestValidationError{
-			field:  "Description",
-			reason: "value length must be between 1 and 140 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetSchema() == nil {
 		err := UpdateFormTemplateRequestValidationError{
 			field:  "Schema",
@@ -1387,13 +1363,9 @@ func (m *Form) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Name
-
 	// no validation rules for EventId
 
 	// no validation rules for MerchantId
-
-	// no validation rules for Description
 
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {
@@ -1618,28 +1590,6 @@ func (m *CreateFormRequest) validate(all bool) error {
 		err := CreateFormRequestValidationError{
 			field:  "EventId",
 			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 50 {
-		err := CreateFormRequestValidationError{
-			field:  "Name",
-			reason: "value length must be between 1 and 50 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 1 || l > 140 {
-		err := CreateFormRequestValidationError{
-			field:  "Description",
-			reason: "value length must be between 1 and 140 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -1969,7 +1919,7 @@ func (m *ListFormsRequest) validate(all bool) error {
 	if _, ok := _ListFormsRequest_SortBy_InLookup[m.GetSortBy()]; !ok {
 		err := ListFormsRequestValidationError{
 			field:  "SortBy",
-			reason: "value must be in list [ name created_at updated_at]",
+			reason: "value must be in list [ created_at updated_at]",
 		}
 		if !all {
 			return err
@@ -2068,7 +2018,6 @@ var _ interface {
 
 var _ListFormsRequest_SortBy_InLookup = map[string]struct{}{
 	"":           {},
-	"name":       {},
 	"created_at": {},
 	"updated_at": {},
 }
@@ -2276,19 +2225,6 @@ func (m *UpdateFormRequest) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
-
-	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := UpdateFormRequestValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Description
 
 	if all {
 		switch v := interface{}(m.GetSchema()).(type) {

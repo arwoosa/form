@@ -15,10 +15,9 @@ const (
 // TestFormTemplate creates a test form template with default values
 func TestFormTemplate() *models.FormTemplate {
 	return &models.FormTemplate{
-		ID:          primitive.NewObjectID(),
-		Name:        "Test Form Template",
-		MerchantID:  TestMerchantIDValue,
-		Description: "Test form template description",
+		ID:         primitive.NewObjectID(),
+		Name:       "Test Form Template",
+		MerchantID: TestMerchantIDValue,
 		Schema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
@@ -59,10 +58,8 @@ func TestFormTemplateWithName(name string) *models.FormTemplate {
 // TestForm creates a test form with default values
 func TestForm() *models.Form {
 	return &models.Form{
-		ID:          primitive.NewObjectID(),
-		Name:        "Test Form",
-		MerchantID:  TestMerchantIDValue,
-		Description: "Test form description",
+		ID:         primitive.NewObjectID(),
+		MerchantID: TestMerchantIDValue,
 		Schema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
@@ -128,7 +125,6 @@ func TestCreateFormTemplateInput() models.CreateFormTemplateInput {
 // TestCreateFormInput creates test input for creating a form
 func TestCreateFormInput() models.CreateFormInput {
 	return models.CreateFormInput{
-		Name:       "Test Form Input",
 		MerchantID: TestMerchantIDValue,
 		Schema: map[string]interface{}{
 			"type": "object",

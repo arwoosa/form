@@ -149,14 +149,13 @@ func (r *mongoFormTemplateRepository) Duplicate(ctx context.Context, sourceID pr
 
 	// Create a duplicate with new name and metadata
 	duplicate := &models.FormTemplate{
-		ID:          primitive.NewObjectID(),
-		Name:        source.Name + nameSuffix,
-		MerchantID:  merchantID,
-		Description: source.Description,
-		Schema:      source.Schema,
-		UISchema:    source.UISchema,
-		CreatedBy:   createdBy,
-		UpdatedBy:   createdBy,
+		ID:         primitive.NewObjectID(),
+		Name:       source.Name + nameSuffix,
+		MerchantID: merchantID,
+		Schema:     source.Schema,
+		UISchema:   source.UISchema,
+		CreatedBy:  createdBy,
+		UpdatedBy:  createdBy,
 	}
 
 	err = r.Create(ctx, duplicate)

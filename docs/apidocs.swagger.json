@@ -438,12 +438,6 @@
     "FormServiceUpdateFormBody": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
         "schema": {
           "type": "object"
         },
@@ -456,9 +450,6 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
-        },
-        "description": {
           "type": "string"
         },
         "schema": {
@@ -534,12 +525,6 @@
           "type": "string",
           "title": "required"
         },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
         "schema": {
           "type": "object"
         },
@@ -560,9 +545,6 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
-        },
-        "description": {
           "type": "string"
         },
         "schema": {
@@ -595,16 +577,10 @@
         "id": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
-        },
         "event_id": {
           "type": "string"
         },
         "merchant_id": {
-          "type": "string"
-        },
-        "description": {
           "type": "string"
         },
         "schema": {
@@ -642,9 +618,6 @@
           "type": "string"
         },
         "merchant_id": {
-          "type": "string"
-        },
-        "description": {
           "type": "string"
         },
         "schema": {

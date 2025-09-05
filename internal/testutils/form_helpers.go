@@ -21,7 +21,6 @@ func AssertFormTemplateEqual(t *testing.T, expected, actual *models.FormTemplate
 
 	assert.Equal(t, expected.Name, actual.Name, "Name mismatch")
 	assert.Equal(t, expected.MerchantID, actual.MerchantID, "MerchantID mismatch")
-	assert.Equal(t, expected.Description, actual.Description, "Description mismatch")
 	assert.Equal(t, expected.Schema, actual.Schema, "Schema mismatch")
 	assert.Equal(t, expected.UISchema, actual.UISchema, "UISchema mismatch")
 
@@ -40,10 +39,8 @@ func AssertFormEqual(t *testing.T, expected, actual *models.Form, ignoreTimestam
 	require.NotNil(t, expected, "Expected form is nil")
 	require.NotNil(t, actual, "Actual form is nil")
 
-	assert.Equal(t, expected.Name, actual.Name, "Name mismatch")
 	assert.Equal(t, expected.MerchantID, actual.MerchantID, "MerchantID mismatch")
 	assert.Equal(t, expected.EventID, actual.EventID, "EventID mismatch")
-	assert.Equal(t, expected.Description, actual.Description, "Description mismatch")
 	assert.Equal(t, expected.Schema, actual.Schema, "Schema mismatch")
 	assert.Equal(t, expected.UISchema, actual.UISchema, "UISchema mismatch")
 

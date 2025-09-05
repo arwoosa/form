@@ -42,14 +42,13 @@ func (s *FormTemplateService) CreateTemplate(ctx context.Context, input *models.
 
 	// Create template model
 	template := &models.FormTemplate{
-		ID:          primitive.NewObjectID(),
-		Name:        input.Name,
-		MerchantID:  input.MerchantID,
-		Description: input.Description,
-		Schema:      input.Schema,
-		UISchema:    input.UISchema,
-		CreatedBy:   input.CreatedBy,
-		UpdatedBy:   input.CreatedBy,
+		ID:         primitive.NewObjectID(),
+		Name:       input.Name,
+		MerchantID: input.MerchantID,
+		Schema:     input.Schema,
+		UISchema:   input.UISchema,
+		CreatedBy:  input.CreatedBy,
+		UpdatedBy:  input.CreatedBy,
 	}
 
 	// Save to repository
@@ -116,7 +115,6 @@ func (s *FormTemplateService) UpdateTemplate(ctx context.Context, input *models.
 
 	// Update template fields
 	existing.Name = input.Name
-	existing.Description = input.Description
 	existing.Schema = input.Schema
 	existing.UISchema = input.UISchema
 	existing.UpdatedBy = input.UpdatedBy

@@ -22,24 +22,14 @@ func TestForm_IsValid(t *testing.T) {
 		{
 			name: "valid form",
 			form: Form{
-				Name:       "Test Form",
 				MerchantID: "merchant123",
 				CreatedBy:  "user123",
 			},
 			expected: true,
 		},
 		{
-			name: "missing name",
-			form: Form{
-				MerchantID: "merchant123",
-				CreatedBy:  "user123",
-			},
-			expected: false,
-		},
-		{
 			name: "missing merchant_id",
 			form: Form{
-				Name:      "Test Form",
 				CreatedBy: "user123",
 			},
 			expected: false,
@@ -47,7 +37,6 @@ func TestForm_IsValid(t *testing.T) {
 		{
 			name: "missing created_by",
 			form: Form{
-				Name:       "Test Form",
 				MerchantID: "merchant123",
 			},
 			expected: false,
@@ -114,13 +103,11 @@ func TestForm_SetAndGetTimes(t *testing.T) {
 func TestCreateFormInput_Validation(t *testing.T) {
 	// Test valid input
 	input := CreateFormInput{
-		Name:       "Test Form",
 		Schema:     map[string]interface{}{"type": "object"},
 		CreatedBy:  "user123",
 		MerchantID: "merchant123",
 	}
 
-	assert.NotEmpty(t, input.Name)
 	assert.NotEmpty(t, input.CreatedBy)
 	assert.NotEmpty(t, input.MerchantID)
 	assert.NotNil(t, input.Schema)

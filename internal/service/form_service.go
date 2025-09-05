@@ -39,15 +39,13 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 
 	// Create form model
 	form := &models.Form{
-		ID:          primitive.NewObjectID(),
-		Name:        input.Name,
-		EventID:     input.EventID,
-		MerchantID:  input.MerchantID,
-		Description: input.Description,
-		Schema:      input.Schema,
-		UISchema:    input.UISchema,
-		CreatedBy:   input.CreatedBy,
-		UpdatedBy:   input.CreatedBy,
+		ID:         primitive.NewObjectID(),
+		EventID:    input.EventID,
+		MerchantID: input.MerchantID,
+		Schema:     input.Schema,
+		UISchema:   input.UISchema,
+		CreatedBy:  input.CreatedBy,
+		UpdatedBy:  input.CreatedBy,
 	}
 
 	// Save to repository
@@ -58,7 +56,6 @@ func (s *FormService) CreateForm(ctx context.Context, input *models.CreateFormIn
 
 	log.Info("Form created successfully",
 		log.String("form_id", form.ID.Hex()),
-		log.String("name", form.Name),
 		log.String("merchant_id", form.MerchantID))
 
 	return form, nil
@@ -113,8 +110,6 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 	}
 
 	// Update form fields
-	existing.Name = input.Name
-	existing.Description = input.Description
 	existing.Schema = input.Schema
 	existing.UISchema = input.UISchema
 	existing.UpdatedBy = input.UpdatedBy
@@ -126,8 +121,7 @@ func (s *FormService) UpdateForm(ctx context.Context, input *models.UpdateFormIn
 	}
 
 	log.Info("Form updated successfully",
-		log.String("form_id", existing.ID.Hex()),
-		log.String("name", existing.Name))
+		log.String("form_id", existing.ID.Hex()))
 
 	return existing, nil
 }
