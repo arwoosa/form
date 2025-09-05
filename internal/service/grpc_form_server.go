@@ -3,15 +3,17 @@ package service
 import (
 	"context"
 
-	"github.com/arwoosa/form/gen/pb/common"
-	pb "github.com/arwoosa/form/gen/pb/form"
-	"github.com/arwoosa/form/internal/models"
 	"github.com/arwoosa/vulpes/ezgrpc"
 	"github.com/arwoosa/vulpes/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/arwoosa/form/gen/pb/common"
+	pb "github.com/arwoosa/form/gen/pb/form"
+	"github.com/arwoosa/form/internal/helper"
+	"github.com/arwoosa/form/internal/models"
 )
 
 // GRPCFormServer implements the FormService gRPC interface
@@ -108,10 +110,10 @@ func (s *GRPCFormServer) ListFormTemplates(ctx context.Context, req *pb.ListForm
 	return &pb.ListFormTemplatesResponse{
 		Templates: pbTemplates,
 		Pagination: &common.Pagination{
-			Page:       int32(options.Page),
-			PageSize:   int32(options.PageSize),
-			TotalCount: int32(totalCount),
-			TotalPages: int32(totalPages),
+			Page:       helper.SafeInt32FromInt(options.Page),
+			PageSize:   helper.SafeInt32FromInt(options.PageSize),
+			TotalCount: helper.SafeInt32FromInt64(totalCount),
+			TotalPages: helper.SafeInt32FromInt64(totalPages),
 		},
 	}, nil
 }
@@ -311,10 +313,10 @@ func (s *GRPCFormServer) ListForms(ctx context.Context, req *pb.ListFormsRequest
 	return &pb.ListFormsResponse{
 		Forms: pbForms,
 		Pagination: &common.Pagination{
-			Page:       int32(options.Page),
-			PageSize:   int32(options.PageSize),
-			TotalCount: int32(totalCount),
-			TotalPages: int32(totalPages),
+			Page:       helper.SafeInt32FromInt(options.Page),
+			PageSize:   helper.SafeInt32FromInt(options.PageSize),
+			TotalCount: helper.SafeInt32FromInt64(totalCount),
+			TotalPages: helper.SafeInt32FromInt64(totalPages),
 		},
 	}, nil
 }

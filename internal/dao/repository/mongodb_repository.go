@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/arwoosa/vulpes/log"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -85,7 +86,11 @@ func (r *MongoRepository) FindWithPagination(ctx context.Context, collection str
 	if err != nil {
 		return 0, fmt.Errorf("failed to find documents: %w", err)
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			log.Error("Failed to close cursor", log.Err(closeErr))
+		}
+	}()
 
 	err = cursor.All(ctx, results)
 	if err != nil {
@@ -128,6 +133,10 @@ func (r *MongoRepository) Find(ctx context.Context, collection string, filter ma
 	if err != nil {
 		return err
 	}
-	defer cursor.Close(ctx)
+	defer func() {
+		if closeErr := cursor.Close(ctx); closeErr != nil {
+			log.Error("Failed to close cursor", log.Err(closeErr))
+		}
+	}()
 	return cursor.All(ctx, results)
 }

@@ -47,6 +47,9 @@ linters:
           - gosec
         path: _test\.go
         text: 'G404: Use of weak random number generator'
+      - linters:
+          - staticcheck
+        text: 'QF1008: could remove embedded field'
       - path: (.+)\.go$
         text: G104
     paths:
