@@ -387,6 +387,21 @@ func (s *GRPCFormServer) DeleteForm(ctx context.Context, req *common.ID) (*empty
 	return &emptypb.Empty{}, nil
 }
 
+// GetPublicFormByEvent gets a form by event ID for public access
+func (s *GRPCFormServer) GetPublicFormByEvent(ctx context.Context, req *pb.GetPublicFormByEventRequest) (*pb.Form, error) {
+	eventID, err := primitive.ObjectIDFromHex(req.EventId)
+	if err != nil {
+		return nil, ErrInvalidObjectID
+	}
+
+	form, err := s.formService.GetPublicFormByEvent(ctx, eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.convertFormToProto(form)
+}
+
 // convertFormTemplateToProto converts a form template model to protobuf
 func (s *GRPCFormServer) convertFormTemplateToProto(template *models.FormTemplate) (*pb.FormTemplate, error) {
 	var schemaStruct *structpb.Struct

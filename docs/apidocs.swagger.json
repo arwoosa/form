@@ -67,7 +67,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "post": {
@@ -98,7 +98,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       }
     },
@@ -129,7 +129,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "delete": {
@@ -159,7 +159,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "put": {
@@ -196,7 +196,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       }
     },
@@ -235,7 +235,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       }
     },
@@ -297,7 +297,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "post": {
@@ -328,7 +328,38 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
+        ]
+      }
+    },
+    "/forms/public": {
+      "get": {
+        "summary": "Gets a form by event ID for public access (frontend users)",
+        "operationId": "FormService_GetPublicFormByEvent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceForm"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Public"
         ]
       }
     },
@@ -359,7 +390,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "delete": {
@@ -389,7 +420,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       },
       "put": {
@@ -426,7 +457,7 @@
           }
         ],
         "tags": [
-          "FormService"
+          "Console"
         ]
       }
     }

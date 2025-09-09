@@ -32,6 +32,7 @@ const (
 	FormService_GetForm_FullMethodName               = "/form.service.FormService/GetForm"
 	FormService_UpdateForm_FullMethodName            = "/form.service.FormService/UpdateForm"
 	FormService_DeleteForm_FullMethodName            = "/form.service.FormService/DeleteForm"
+	FormService_GetPublicFormByEvent_FullMethodName  = "/form.service.FormService/GetPublicFormByEvent"
 )
 
 // FormServiceClient is the client API for FormService service.
@@ -60,6 +61,8 @@ type FormServiceClient interface {
 	UpdateForm(ctx context.Context, in *UpdateFormRequest, opts ...grpc.CallOption) (*Form, error)
 	// Deletes a form by ID
 	DeleteForm(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Gets a form by event ID for public access (frontend users)
+	GetPublicFormByEvent(ctx context.Context, in *GetPublicFormByEventRequest, opts ...grpc.CallOption) (*Form, error)
 }
 
 type formServiceClient struct {
@@ -169,6 +172,15 @@ func (c *formServiceClient) DeleteForm(ctx context.Context, in *common.ID, opts 
 	return out, nil
 }
 
+func (c *formServiceClient) GetPublicFormByEvent(ctx context.Context, in *GetPublicFormByEventRequest, opts ...grpc.CallOption) (*Form, error) {
+	out := new(Form)
+	err := c.cc.Invoke(ctx, FormService_GetPublicFormByEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FormServiceServer is the server API for FormService service.
 // All implementations must embed UnimplementedFormServiceServer
 // for forward compatibility
@@ -195,6 +207,8 @@ type FormServiceServer interface {
 	UpdateForm(context.Context, *UpdateFormRequest) (*Form, error)
 	// Deletes a form by ID
 	DeleteForm(context.Context, *common.ID) (*emptypb.Empty, error)
+	// Gets a form by event ID for public access (frontend users)
+	GetPublicFormByEvent(context.Context, *GetPublicFormByEventRequest) (*Form, error)
 	mustEmbedUnimplementedFormServiceServer()
 }
 
@@ -234,6 +248,9 @@ func (UnimplementedFormServiceServer) UpdateForm(context.Context, *UpdateFormReq
 }
 func (UnimplementedFormServiceServer) DeleteForm(context.Context, *common.ID) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteForm not implemented")
+}
+func (UnimplementedFormServiceServer) GetPublicFormByEvent(context.Context, *GetPublicFormByEventRequest) (*Form, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPublicFormByEvent not implemented")
 }
 func (UnimplementedFormServiceServer) mustEmbedUnimplementedFormServiceServer() {}
 
@@ -446,6 +463,24 @@ func _FormService_DeleteForm_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FormService_GetPublicFormByEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPublicFormByEventRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FormServiceServer).GetPublicFormByEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FormService_GetPublicFormByEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FormServiceServer).GetPublicFormByEvent(ctx, req.(*GetPublicFormByEventRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FormService_ServiceDesc is the grpc.ServiceDesc for FormService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -496,6 +531,10 @@ var FormService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteForm",
 			Handler:    _FormService_DeleteForm_Handler,
+		},
+		{
+			MethodName: "GetPublicFormByEvent",
+			Handler:    _FormService_GetPublicFormByEvent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
