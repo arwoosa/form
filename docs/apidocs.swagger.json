@@ -67,7 +67,7 @@
           }
         ],
         "tags": [
-          "Console"
+          "FormService"
         ]
       },
       "post": {
@@ -98,7 +98,7 @@
           }
         ],
         "tags": [
-          "Console"
+          "FormService"
         ]
       }
     },
@@ -129,7 +129,7 @@
           }
         ],
         "tags": [
-          "Console"
+          "FormService"
         ]
       },
       "delete": {
@@ -159,7 +159,7 @@
           }
         ],
         "tags": [
-          "Console"
+          "FormService"
         ]
       },
       "put": {
@@ -196,7 +196,7 @@
           }
         ],
         "tags": [
-          "Console"
+          "FormService"
         ]
       }
     },
@@ -235,229 +235,7 @@
           }
         ],
         "tags": [
-          "Console"
-        ]
-      }
-    },
-    "/forms": {
-      "get": {
-        "summary": "Lists forms with pagination",
-        "operationId": "FormService_ListForms",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceListFormsResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page",
-            "description": "Optional: defaults to 1 if not provided or \u003c= 0",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_size",
-            "description": "Optional: defaults to config value if not provided or \u003c= 0",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "event_id",
-            "description": "Optional filter by event",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_by",
-            "description": "Optional sort field",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_order",
-            "description": "Optional sort order",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Console"
-        ]
-      },
-      "post": {
-        "summary": "Creates a new form",
-        "operationId": "FormService_CreateForm",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceCreateFormResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/serviceCreateFormRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Console"
-        ]
-      }
-    },
-    "/forms/public": {
-      "get": {
-        "summary": "Gets a form by event ID for public access (frontend users)",
-        "operationId": "FormService_GetPublicFormByEvent",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceForm"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "event_id",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Public"
-        ]
-      }
-    },
-    "/forms/{id}": {
-      "get": {
-        "summary": "Gets a single form by ID",
-        "operationId": "FormService_GetForm",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceForm"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Console"
-        ]
-      },
-      "delete": {
-        "summary": "Deletes a form by ID",
-        "operationId": "FormService_DeleteForm",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Console"
-        ]
-      },
-      "put": {
-        "summary": "Updates an existing form",
-        "operationId": "FormService_UpdateForm",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/serviceForm"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/FormServiceUpdateFormBody"
-            }
-          }
-        ],
-        "tags": [
-          "Console"
+          "FormService"
         ]
       }
     }
@@ -465,17 +243,6 @@
   "definitions": {
     "FormServiceDuplicateFormTemplateBody": {
       "type": "object"
-    },
-    "FormServiceUpdateFormBody": {
-      "type": "object",
-      "properties": {
-        "schema": {
-          "type": "object"
-        },
-        "uischema": {
-          "type": "object"
-        }
-      }
     },
     "FormServiceUpdateFormTemplateBody": {
       "type": "object",
@@ -549,29 +316,6 @@
         }
       }
     },
-    "serviceCreateFormRequest": {
-      "type": "object",
-      "properties": {
-        "event_id": {
-          "type": "string",
-          "title": "required"
-        },
-        "schema": {
-          "type": "object"
-        },
-        "uischema": {
-          "type": "object"
-        }
-      }
-    },
-    "serviceCreateFormResponse": {
-      "type": "object",
-      "properties": {
-        "form": {
-          "$ref": "#/definitions/serviceForm"
-        }
-      }
-    },
     "serviceCreateFormTemplateRequest": {
       "type": "object",
       "properties": {
@@ -601,43 +345,6 @@
           "$ref": "#/definitions/serviceFormTemplate"
         }
       }
-    },
-    "serviceForm": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "event_id": {
-          "type": "string"
-        },
-        "merchant_id": {
-          "type": "string"
-        },
-        "schema": {
-          "type": "object",
-          "title": "JSON Schema defining data structure and validation rules"
-        },
-        "uischema": {
-          "type": "object",
-          "title": "UI Schema defining form layout and appearance"
-        },
-        "created_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "created_by": {
-          "type": "string"
-        },
-        "updated_at": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "updated_by": {
-          "type": "string"
-        }
-      },
-      "title": "Form Messages"
     },
     "serviceFormTemplate": {
       "type": "object",
@@ -684,21 +391,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/serviceFormTemplate"
-          }
-        },
-        "pagination": {
-          "$ref": "#/definitions/commonPagination"
-        }
-      }
-    },
-    "serviceListFormsResponse": {
-      "type": "object",
-      "properties": {
-        "forms": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/serviceForm"
           }
         },
         "pagination": {

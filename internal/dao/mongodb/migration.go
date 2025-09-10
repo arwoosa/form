@@ -53,7 +53,7 @@ var migrations = []Migration{
 			},
 		},
 	},
-	{
+	/*{
 		Collection: "forms",
 		Indexes: []mongo.IndexModel{
 			// Basic query index for merchant isolation and sorting
@@ -97,7 +97,7 @@ var migrations = []Migration{
 				Keys: bson.D{{Key: "name", Value: "text"}},
 			},
 		},
-	},
+	},*/
 }
 
 // Migrate runs all the defined migrations.

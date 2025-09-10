@@ -219,6 +219,7 @@ func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.Dupl
 	}, nil
 }
 
+/*
 // CreateForm creates a new form
 func (s *GRPCFormServer) CreateForm(ctx context.Context, req *pb.CreateFormRequest) (*pb.CreateFormResponse, error) {
 	user, err := ezgrpc.GetUser(ctx)
@@ -401,6 +402,7 @@ func (s *GRPCFormServer) GetPublicFormByEvent(ctx context.Context, req *pb.GetPu
 
 	return s.convertFormToProto(form)
 }
+*/
 
 // convertFormTemplateToProto converts a form template model to protobuf
 func (s *GRPCFormServer) convertFormTemplateToProto(template *models.FormTemplate) (*pb.FormTemplate, error) {
@@ -441,6 +443,7 @@ func (s *GRPCFormServer) convertFormTemplateToProto(template *models.FormTemplat
 	}, nil
 }
 
+/*
 // convertFormToProto converts a form model to protobuf
 func (s *GRPCFormServer) convertFormToProto(form *models.Form) (*pb.Form, error) {
 	var schemaStruct *structpb.Struct
@@ -484,6 +487,7 @@ func (s *GRPCFormServer) convertFormToProto(form *models.Form) (*pb.Form, error)
 
 	return pbForm, nil
 }
+*/
 
 // convertMongoDataToMap converts MongoDB primitive types to map[string]interface{}
 func (s *GRPCFormServer) convertMongoDataToMap(data interface{}) map[string]interface{} {

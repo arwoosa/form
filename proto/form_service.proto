@@ -20,9 +20,6 @@ service FormService {
             post: "/form_templates"
             body: "*"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
     
     // Lists form templates with pagination
@@ -30,18 +27,12 @@ service FormService {
         option (google.api.http) = {
             get: "/form_templates"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
     
     // Gets a single form template by ID
     rpc GetFormTemplate(form.common.ID) returns (FormTemplate) {
         option (google.api.http) = {
             get: "/form_templates/{id}"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
         };
     }
     
@@ -51,18 +42,12 @@ service FormService {
             put: "/form_templates/{id}"
             body: "*"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
     
     // Deletes a form template by ID
     rpc DeleteFormTemplate(form.common.ID) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             delete: "/form_templates/{id}"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
         };
     }
     
@@ -72,19 +57,13 @@ service FormService {
             post: "/form_templates/{id}/duplicate"
             body: "*"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
-    
+    /*
     // Creates a new form
     rpc CreateForm(CreateFormRequest) returns (CreateFormResponse) {
         option (google.api.http) = {
             post: "/forms"
             body: "*"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
         };
     }
     
@@ -93,18 +72,12 @@ service FormService {
         option (google.api.http) = {
             get: "/forms"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
     
     // Gets a single form by ID
     rpc GetForm(form.common.ID) returns (Form) {
         option (google.api.http) = {
             get: "/forms/{id}"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
         };
     }
     
@@ -114,18 +87,12 @@ service FormService {
             put: "/forms/{id}"
             body: "*"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
-        };
     }
     
     // Deletes a form by ID
     rpc DeleteForm(form.common.ID) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             delete: "/forms/{id}"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Console"]
         };
     }
     
@@ -134,10 +101,8 @@ service FormService {
         option (google.api.http) = {
             get: "/forms/public"
         };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            tags: ["Public"]
-        };
     }
+    */
 }
 
 // Form Template Messages
@@ -190,7 +155,7 @@ message DuplicateFormTemplateRequest {
 message DuplicateFormTemplateResponse {
     FormTemplate template = 1;
 }
-
+/*
 // Form Messages
 message Form {
     string id = 1;
@@ -237,3 +202,4 @@ message UpdateFormRequest {
 message GetPublicFormByEventRequest {
     string event_id = 1 [(validate.rules).string.min_len = 1];
 }
+*/
