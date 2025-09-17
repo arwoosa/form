@@ -21,13 +21,15 @@ type GRPCFormServer struct {
 	pb.UnimplementedFormServiceServer
 	templateService *FormTemplateService
 	formService     *FormService
+	configService   *ConfigService
 }
 
 // NewGRPCFormServer creates a new gRPC form server
-func NewGRPCFormServer(templateService *FormTemplateService, formService *FormService) *GRPCFormServer {
+func NewGRPCFormServer(templateService *FormTemplateService, formService *FormService, configService *ConfigService) *GRPCFormServer {
 	return &GRPCFormServer{
 		templateService: templateService,
 		formService:     formService,
+		configService:   configService,
 	}
 }
 
@@ -216,6 +218,18 @@ func (s *GRPCFormServer) DuplicateFormTemplate(ctx context.Context, req *pb.Dupl
 
 	return &pb.DuplicateFormTemplateResponse{
 		Template: pbTemplate,
+	}, nil
+}
+
+// GetConfig returns configuration settings for the frontend
+func (s *GRPCFormServer) GetConfig(ctx context.Context, req *emptypb.Empty) (*pb.ConfigResponse, error) {
+	businessConfig, err := s.configService.GetBusinessConfig(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ConfigResponse{
+		MaxTemplatesPerMerchant: helper.SafeInt32FromInt(businessConfig.MaxTemplatesPerMerchant),
 	}, nil
 }
 

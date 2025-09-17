@@ -16,6 +16,29 @@
     "application/json"
   ],
   "paths": {
+    "/config": {
+      "get": {
+        "summary": "Gets configuration settings for the frontend",
+        "operationId": "FormService_GetConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceConfigResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "FormService"
+        ]
+      }
+    },
     "/form_templates": {
       "get": {
         "summary": "Lists form templates with pagination",
@@ -44,7 +67,7 @@
             "format": "int32"
           },
           {
-            "name": "page_size",
+            "name": "pageSize",
             "description": "Optional: defaults to config value if not provided or \u003c= 0",
             "in": "query",
             "required": false,
@@ -52,14 +75,14 @@
             "format": "int32"
           },
           {
-            "name": "sort_by",
+            "name": "sortBy",
             "description": "Optional sort field",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "sort_order",
+            "name": "sortOrder",
             "description": "Optional sort order",
             "in": "query",
             "required": false,
@@ -265,15 +288,15 @@
           "type": "integer",
           "format": "int32"
         },
-        "page_size": {
+        "pageSize": {
           "type": "integer",
           "format": "int32"
         },
-        "total_count": {
+        "totalCount": {
           "type": "integer",
           "format": "int32"
         },
-        "total_pages": {
+        "totalPages": {
           "type": "integer",
           "format": "int32"
         }
@@ -316,6 +339,17 @@
         }
       }
     },
+    "serviceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "maxTemplatesPerMerchant": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Maximum number of templates allowed per merchant"
+        }
+      },
+      "title": "Configuration response containing business settings"
+    },
     "serviceCreateFormTemplateRequest": {
       "type": "object",
       "properties": {
@@ -355,7 +389,7 @@
         "name": {
           "type": "string"
         },
-        "merchant_id": {
+        "merchantId": {
           "type": "string"
         },
         "schema": {
@@ -366,18 +400,18 @@
           "type": "object",
           "title": "UI Schema defining form layout and appearance"
         },
-        "created_at": {
+        "createdAt": {
           "type": "string",
           "format": "date-time"
         },
-        "created_by": {
+        "createdBy": {
           "type": "string"
         },
-        "updated_at": {
+        "updatedAt": {
           "type": "string",
           "format": "date-time"
         },
-        "updated_by": {
+        "updatedBy": {
           "type": "string"
         }
       },

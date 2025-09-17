@@ -58,6 +58,13 @@ service FormService {
             body: "*"
         };
     }
+
+    // Gets configuration settings for the frontend
+    rpc GetConfig(google.protobuf.Empty) returns (ConfigResponse) {
+        option (google.api.http) = {
+            get: "/config"
+        };
+    }
     /*
     // Creates a new form
     rpc CreateForm(CreateFormRequest) returns (CreateFormResponse) {
@@ -154,6 +161,11 @@ message DuplicateFormTemplateRequest {
 
 message DuplicateFormTemplateResponse {
     FormTemplate template = 1;
+}
+
+// Configuration response containing business settings
+message ConfigResponse {
+    int32 max_templates_per_merchant = 1;  // Maximum number of templates allowed per merchant
 }
 /*
 // Form Messages

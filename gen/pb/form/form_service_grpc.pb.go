@@ -27,6 +27,7 @@ const (
 	FormService_UpdateFormTemplate_FullMethodName    = "/form.service.FormService/UpdateFormTemplate"
 	FormService_DeleteFormTemplate_FullMethodName    = "/form.service.FormService/DeleteFormTemplate"
 	FormService_DuplicateFormTemplate_FullMethodName = "/form.service.FormService/DuplicateFormTemplate"
+	FormService_GetConfig_FullMethodName             = "/form.service.FormService/GetConfig"
 )
 
 // FormServiceClient is the client API for FormService service.
@@ -45,6 +46,8 @@ type FormServiceClient interface {
 	DeleteFormTemplate(ctx context.Context, in *common.ID, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Duplicates an existing form template
 	DuplicateFormTemplate(ctx context.Context, in *DuplicateFormTemplateRequest, opts ...grpc.CallOption) (*DuplicateFormTemplateResponse, error)
+	// Gets configuration settings for the frontend
+	GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ConfigResponse, error)
 }
 
 type formServiceClient struct {
@@ -109,6 +112,15 @@ func (c *formServiceClient) DuplicateFormTemplate(ctx context.Context, in *Dupli
 	return out, nil
 }
 
+func (c *formServiceClient) GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ConfigResponse, error) {
+	out := new(ConfigResponse)
+	err := c.cc.Invoke(ctx, FormService_GetConfig_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FormServiceServer is the server API for FormService service.
 // All implementations must embed UnimplementedFormServiceServer
 // for forward compatibility
@@ -125,6 +137,8 @@ type FormServiceServer interface {
 	DeleteFormTemplate(context.Context, *common.ID) (*emptypb.Empty, error)
 	// Duplicates an existing form template
 	DuplicateFormTemplate(context.Context, *DuplicateFormTemplateRequest) (*DuplicateFormTemplateResponse, error)
+	// Gets configuration settings for the frontend
+	GetConfig(context.Context, *emptypb.Empty) (*ConfigResponse, error)
 	mustEmbedUnimplementedFormServiceServer()
 }
 
@@ -149,6 +163,9 @@ func (UnimplementedFormServiceServer) DeleteFormTemplate(context.Context, *commo
 }
 func (UnimplementedFormServiceServer) DuplicateFormTemplate(context.Context, *DuplicateFormTemplateRequest) (*DuplicateFormTemplateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DuplicateFormTemplate not implemented")
+}
+func (UnimplementedFormServiceServer) GetConfig(context.Context, *emptypb.Empty) (*ConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
 }
 func (UnimplementedFormServiceServer) mustEmbedUnimplementedFormServiceServer() {}
 
@@ -271,6 +288,24 @@ func _FormService_DuplicateFormTemplate_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FormService_GetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FormServiceServer).GetConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FormService_GetConfig_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FormServiceServer).GetConfig(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FormService_ServiceDesc is the grpc.ServiceDesc for FormService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -301,6 +336,10 @@ var FormService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DuplicateFormTemplate",
 			Handler:    _FormService_DuplicateFormTemplate_Handler,
+		},
+		{
+			MethodName: "GetConfig",
+			Handler:    _FormService_GetConfig_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

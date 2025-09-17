@@ -29,7 +29,7 @@ func RegisterFormServices(appConfig *conf.AppConfig) {
 func registerFormServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
 	if appConfig == nil {
 		log.Warn("Form services initialized with nil config - using mock services")
-		grpcServer := NewGRPCFormServer(nil, nil)
+		grpcServer := NewGRPCFormServer(nil, nil, nil)
 		pb.RegisterFormServiceServer(s, grpcServer)
 		return
 	}
@@ -38,7 +38,7 @@ func registerFormServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
 	mongoClient := mongodb.GetMongoDB()
 	if mongoClient == nil {
 		log.Warn("Form services initialized without MongoDB - using mock services")
-		grpcServer := NewGRPCFormServer(nil, nil)
+		grpcServer := NewGRPCFormServer(nil, nil, nil)
 		pb.RegisterFormServiceServer(s, grpcServer)
 		return
 	}
@@ -53,9 +53,10 @@ func registerFormServices(s grpc.ServiceRegistrar, appConfig *conf.AppConfig) {
 	// Initialize services
 	templateService := NewFormTemplateService(templateRepo, appConfig)
 	formService := NewFormService(formRepo, templateRepo, appConfig)
+	configService := NewConfigService(appConfig)
 
 	// Create gRPC server with the services
-	grpcServer := NewGRPCFormServer(templateService, formService)
+	grpcServer := NewGRPCFormServer(templateService, formService, configService)
 
 	// Register form service
 	pb.RegisterFormServiceServer(s, grpcServer)
